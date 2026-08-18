@@ -1,0 +1,23 @@
+export type GProntoFrameworkApplicationRootUser = {
+  UserId: string;
+  AuthUserId: string;
+  Email: string;
+  FirstName: string;
+  LastName: string;
+  Role: string;
+  RoleApplication: string;
+  RolePrototype: string;
+  OrganisationId: string;
+  ProfileUrl: string;
+  Language: string;
+  Locale: string;
+  CurrencyCode: string;
+  DateFormat: string;
+  DatetimeFormat: string;
+  CurrencyFormat: string;
+  Blocked: string;
+  CanInitiate: string;
+  CanProcess: string;
+  Kyc: string;
+  Settings: string;
+};

@@ -1,0 +1,18 @@
+# Folders owned by tools, not by gPronto source
+.git
+.history
+.vscode
+.claude
+.agents
+.node
+node_modules
+dist
+logs
+
+# The shared framework junction inside each application repository
+gPronto/
+
+# Files owned by tools or containing environment values
+package-lock.json
+.env
+.env.*

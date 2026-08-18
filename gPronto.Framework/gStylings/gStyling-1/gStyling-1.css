@@ -1,0 +1,1077 @@
+:root {
+  --gpronto-font-family-standard:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  --gpronto-color-state-success: #2e7d32;
+  --gpronto-color-state-info: #0288d1;
+  --gpronto-color-state-error: #d32f2f;
+  --gpronto-color-state-warning: #ed6c02;
+  --gpronto-color-surface-standard: #ffffff;
+  --gpronto-color-surface-subtle: #f5f8fc;
+  --gpronto-color-surface-elevated: #ffffff;
+  --gpronto-color-surface-disabled: #f2f4f7;
+  --gpronto-color-border-standard: #bbdefb;
+  --gpronto-color-border-secondary: #e2e8f0;
+  --gpronto-color-border-control-hover: #1976d2;
+  --gpronto-color-text-primary: #17233c;
+  --gpronto-color-text-secondary: #526176;
+  --gpronto-color-text-disabled: #9aa5b1;
+  --gpronto-color-brand-primary: #1976d2;
+  --gpronto-color-brand-primary-hover: #1565c0;
+  --gpronto-color-brand-primary-active: #0d47a1;
+  --gpronto-color-state-selected: #e3f2fd;
+  --gpronto-color-state-hover: #f0f7ff;
+  --gpronto-font-size-base: 14px;
+  --gpronto-line-height-standard: 1.5714285714;
+  --gpronto-height-control-standard: 38px;
+  --gpronto-radius-compact: 6px;
+  --gpronto-radius-standard: 8px;
+}
+
+html {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+* {
+  box-sizing: inherit;
+}
+
+*::before {
+  box-sizing: inherit;
+}
+
+*::after {
+  box-sizing: inherit;
+}
+
+body {
+  margin: 0;
+  font-family: var(--gpronto-font-family-standard);
+  color: var(--gpronto-color-text-primary);
+  background-color: var(--gpronto-color-surface-standard);
+  font-size: var(--gpronto-font-size-base);
+  line-height: var(--gpronto-line-height-standard);
+}
+
+.glayout-cards-modern {
+  font-family: var(--gpronto-font-family-standard);
+  color: var(--gpronto-color-text-primary);
+  background-color: var(--gpronto-color-surface-standard);
+  font-size: var(--gpronto-font-size-base);
+  line-height: var(--gpronto-line-height-standard);
+}
+
+.glayout-single-column {
+  font-family: var(--gpronto-font-family-standard);
+  color: var(--gpronto-color-text-primary);
+  background-color: var(--gpronto-color-surface-standard);
+  font-size: var(--gpronto-font-size-base);
+  line-height: var(--gpronto-line-height-standard);
+}
+
+.glayout-two-column-navigation {
+  font-family: var(--gpronto-font-family-standard);
+  color: var(--gpronto-color-text-primary);
+  background-color: var(--gpronto-color-surface-standard);
+  font-size: var(--gpronto-font-size-base);
+  line-height: var(--gpronto-line-height-standard);
+}
+
+.gcomponent-authentication-email-change {
+  width: min(100%, 360px);
+}
+
+.gcomponent-authentication-email-confirmation-resend {
+  width: min(100%, 360px);
+}
+
+.gcomponent-authentication-invitation-acceptance {
+  width: min(100%, 360px);
+}
+
+.gcomponent-authentication-magic-link-request {
+  width: min(100%, 360px);
+}
+
+.gcomponent-authentication-password-change {
+  width: min(100%, 360px);
+}
+
+.gcomponent-authentication-password-recovery-request {
+  width: min(100%, 360px);
+}
+
+.gcomponent-authentication-password-reset {
+  width: min(100%, 360px);
+}
+
+.gcomponent-authentication-sign-in {
+  width: min(100%, 360px);
+}
+
+.gcomponent-authentication-sign-up {
+  width: min(100%, 360px);
+}
+
+.glayout-single-column {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 100dvh;
+  padding: 30px 2rem;
+}
+
+.glayout-single-column__content {
+  display: grid;
+  gap: 1rem;
+  width: min(100%, 72rem);
+  margin-inline: auto;
+}
+
+.glayout-two-column-navigation {
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 16rem minmax(0, 1fr);
+  min-height: 100dvh;
+  height: 100dvh;
+  padding: 30px 0;
+}
+
+.glayout-two-column-navigation__navigation {
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.glayout-two-column-navigation__content {
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.glayout-cards-modern {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  min-height: 100dvh;
+  padding: 30px 2rem;
+}
+
+.glayout-cards-modern__header-section {
+  width: min(100%, 900px);
+  margin-inline: auto;
+}
+
+.glayout-cards-modern__body-section {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  width: min(100%, 900px);
+  margin-inline: auto;
+}
+
+.glayout-cards-modern__footer-section {
+  width: min(100%, 900px);
+  margin-inline: auto;
+}
+
+.glayout-cards-modern__card {
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--gpronto-color-surface-elevated);
+  border: 1px solid var(--gpronto-color-border-standard);
+  border-radius: var(--gpronto-radius-standard);
+}
+
+.glayout-cards-modern__card-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--gpronto-color-border-secondary);
+}
+
+.glayout-cards-modern__card-body {
+  padding: 24px;
+}
+
+.gcomponent-navigation__list {
+  display: grid;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.gcomponent-navigation {
+  background-color: var(--gpronto-color-surface-standard);
+}
+
+.gcomponent-navigation--vertical {
+  min-height: 100%;
+  border-right: 1px solid var(--gpronto-color-border-secondary);
+}
+
+.gcomponent-navigation--horizontal .gcomponent-navigation__list {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.gcomponent-navigation__link {
+  display: flex;
+  align-items: center;
+  min-height: var(--gpronto-height-control-standard);
+  padding: 0 12px;
+  overflow-wrap: anywhere;
+  color: var(--gpronto-color-text-primary);
+  text-decoration: none;
+}
+
+.gcomponent-navigation__link:hover {
+  color: var(--gpronto-color-brand-primary);
+  background-color: var(--gpronto-color-state-hover);
+}
+
+.gcomponent-navigation__link:focus-visible {
+  color: var(--gpronto-color-brand-primary);
+  background-color: var(--gpronto-color-state-hover);
+}
+
+.gcomponent-navigation__link--active {
+  color: var(--gpronto-color-brand-primary);
+  background-color: var(--gpronto-color-state-selected);
+}
+
+.gcomponent-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  width: 100%;
+  min-width: 0;
+}
+
+.gcomponent-footer {
+  width: 100%;
+}
+
+.gcomponent-footer__values {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px 24px;
+  margin: 0;
+}
+
+.gcomponent-footer__value {
+  min-width: 0;
+}
+
+.gcomponent-footer__label {
+  color: var(--gpronto-color-text-secondary);
+  font-size: var(--gpronto-font-size-base);
+}
+
+.gcomponent-footer__text {
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: var(--gpronto-color-text-primary);
+}
+
+.gcomponent-typography {
+  color: var(--gpronto-color-text-primary);
+}
+
+.gcomponent-flow--horizontal {
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.gcomponent-flow--gap-xs {
+  gap: 0.25rem;
+}
+
+.gcomponent-flow--gap-sm {
+  gap: 0.5rem;
+}
+
+.gcomponent-flow--gap-md {
+  gap: 1rem;
+}
+
+.gcomponent-flow--gap-lg {
+  gap: 1.5rem;
+}
+
+.gcomponent-flow--gap-xl {
+  gap: 2rem;
+}
+
+.gcomponent-flow--justify-start {
+  justify-content: flex-start;
+}
+
+.gcomponent-flow--justify-center {
+  justify-content: center;
+}
+
+.gcomponent-flow--justify-end {
+  justify-content: flex-end;
+}
+
+.gcomponent-flow--justify-space-between {
+  justify-content: space-between;
+}
+
+.gcomponent-alert__title--h6 {
+  font-family: var(--gpronto-font-family-standard);
+  font-size: var(--gpronto-font-size-base);
+}
+
+.gcomponent-alert__message--normal {
+  font-family: var(--gpronto-font-family-standard);
+  font-size: var(--gpronto-font-size-base);
+}
+
+.gcomponent-badge__text--small {
+  font-family: var(--gpronto-font-family-standard);
+  font-size: var(--gpronto-font-size-base);
+}
+
+.gcomponent-button__label--normal {
+  font-family: var(--gpronto-font-family-standard);
+  font-size: var(--gpronto-font-size-base);
+}
+
+.gcomponent-postgres-data-table__typography--normal {
+  font-family: var(--gpronto-font-family-standard);
+  font-size: var(--gpronto-font-size-base);
+}
+
+.gcomponent-postgres-data-table__typography--small {
+  font-family: var(--gpronto-font-family-standard);
+  font-size: var(--gpronto-font-size-base);
+}
+
+.gcomponent-input__typography--normal {
+  font-family: var(--gpronto-font-family-standard);
+  font-size: var(--gpronto-font-size-base);
+}
+
+.gcomponent-input__typography--small {
+  font-family: var(--gpronto-font-family-standard);
+  font-size: var(--gpronto-font-size-base);
+}
+
+.gcomponent-navigation__link--normal {
+  font-family: var(--gpronto-font-family-standard);
+  font-size: var(--gpronto-font-size-base);
+}
+
+.gcomponent-typography--normal {
+  font-family: var(--gpronto-font-family-standard);
+  font-size: var(--gpronto-font-size-base);
+}
+
+.gcomponent-typography--small {
+  font-family: var(--gpronto-font-family-standard);
+  font-size: var(--gpronto-font-size-base);
+}
+
+.gcomponent-typography--lead {
+  font-family: var(--gpronto-font-family-standard);
+  font-size: var(--gpronto-font-size-base);
+}
+
+.gcomponent-typography--h1 {
+  font-family: var(--gpronto-font-family-standard);
+  font-size: var(--gpronto-font-size-base);
+}
+
+.gcomponent-typography--h2 {
+  font-family: var(--gpronto-font-family-standard);
+  font-size: var(--gpronto-font-size-base);
+}
+
+.gcomponent-typography--h3 {
+  font-family: var(--gpronto-font-family-standard);
+  font-size: var(--gpronto-font-size-base);
+}
+
+.gcomponent-typography--h4 {
+  font-family: var(--gpronto-font-family-standard);
+  font-size: var(--gpronto-font-size-base);
+}
+
+.gcomponent-typography--h5 {
+  font-family: var(--gpronto-font-family-standard);
+  font-size: var(--gpronto-font-size-base);
+}
+
+.gcomponent-typography--h6 {
+  font-family: var(--gpronto-font-family-standard);
+  font-size: var(--gpronto-font-size-base);
+}
+
+.gcomponent-typography--normal {
+  line-height: var(--gpronto-line-height-standard);
+}
+
+.gcomponent-typography--small {
+  line-height: var(--gpronto-line-height-standard);
+}
+
+.gcomponent-typography--h1 {
+  margin-top: 8px;
+}
+
+.gcomponent-typography--h2 {
+  margin-top: 8px;
+}
+
+.gcomponent-typography--h3 {
+  margin-top: 8px;
+}
+
+.gcomponent-typography--h4 {
+  margin-top: 8px;
+}
+
+.gcomponent-typography--h5 {
+  margin-top: 8px;
+}
+
+.gcomponent-typography--h6 {
+  margin-top: 8px;
+}
+
+.gcomponent-button {
+  min-width: 138px;
+  min-height: var(--gpronto-height-control-standard);
+  border-radius: var(--gpronto-radius-compact);
+  font-family: var(--gpronto-font-family-standard);
+  font-size: var(--gpronto-font-size-base);
+  font-weight: 400;
+  line-height: var(--gpronto-line-height-standard);
+  text-transform: none;
+}
+
+.gcomponent-button--icon-only {
+  width: var(--gpronto-height-control-standard);
+  min-width: var(--gpronto-height-control-standard);
+  height: var(--gpronto-height-control-standard);
+  padding: 0;
+}
+
+.gcomponent-button--primary {
+  color: var(--gpronto-color-surface-standard);
+  background-color: var(--gpronto-color-brand-primary);
+  border: 1px solid var(--gpronto-color-brand-primary);
+}
+
+.gcomponent-button--primary:hover {
+  color: var(--gpronto-color-surface-standard);
+  background-color: var(--gpronto-color-brand-primary-hover);
+  border-color: var(--gpronto-color-brand-primary-hover);
+}
+
+.gcomponent-button--primary:active {
+  color: var(--gpronto-color-surface-standard);
+  background-color: var(--gpronto-color-brand-primary-active);
+  border-color: var(--gpronto-color-brand-primary-active);
+}
+
+.gcomponent-button--primary:focus-visible {
+  color: var(--gpronto-color-surface-standard);
+  background-color: var(--gpronto-color-brand-primary);
+  border-color: var(--gpronto-color-brand-primary);
+}
+
+.gcomponent-button--primary-disabled:disabled {
+  color: var(--gpronto-color-text-disabled);
+  background-color: var(--gpronto-color-surface-disabled);
+  border-color: var(--gpronto-color-border-standard);
+}
+
+.gcomponent-button--primary-loading:disabled {
+  color: var(--gpronto-color-text-disabled);
+  background-color: var(--gpronto-color-surface-disabled);
+  border-color: var(--gpronto-color-border-standard);
+}
+
+.gcomponent-button--secondary {
+  color: var(--gpronto-color-text-primary);
+  background-color: var(--gpronto-color-surface-standard);
+  border: 1px solid var(--gpronto-color-border-secondary);
+}
+
+.gcomponent-button--secondary:hover {
+  color: var(--gpronto-color-text-primary);
+  background-color: var(--gpronto-color-state-hover);
+  border-color: var(--gpronto-color-border-control-hover);
+}
+
+.gcomponent-button--secondary:active {
+  color: var(--gpronto-color-text-primary);
+  background-color: var(--gpronto-color-state-selected);
+  border-color: var(--gpronto-color-border-control-hover);
+}
+
+.gcomponent-button--secondary:focus-visible {
+  color: var(--gpronto-color-text-primary);
+  background-color: var(--gpronto-color-surface-standard);
+  border-color: var(--gpronto-color-border-control-hover);
+}
+
+.gcomponent-button--secondary-disabled:disabled {
+  color: var(--gpronto-color-text-disabled);
+  background-color: var(--gpronto-color-surface-disabled);
+  border-color: var(--gpronto-color-border-secondary);
+}
+
+.gcomponent-button--secondary-loading:disabled {
+  color: var(--gpronto-color-text-disabled);
+  background-color: var(--gpronto-color-surface-disabled);
+  border-color: var(--gpronto-color-border-secondary);
+}
+
+.gcomponent-button--danger {
+  color: var(--gpronto-color-surface-standard);
+  background-color: var(--gpronto-color-state-error);
+  border: 1px solid var(--gpronto-color-state-error);
+}
+
+.gcomponent-button--danger:hover {
+  color: var(--gpronto-color-surface-standard);
+  background-color: var(--gpronto-color-state-error);
+  border-color: var(--gpronto-color-state-error);
+  filter: brightness(0.92);
+}
+
+.gcomponent-button--danger:active {
+  color: var(--gpronto-color-surface-standard);
+  background-color: var(--gpronto-color-state-error);
+  border-color: var(--gpronto-color-state-error);
+  filter: brightness(0.84);
+}
+
+.gcomponent-button--danger:focus-visible {
+  color: var(--gpronto-color-surface-standard);
+  background-color: var(--gpronto-color-state-error);
+  border-color: var(--gpronto-color-state-error);
+}
+
+.gcomponent-button--danger-disabled:disabled {
+  color: var(--gpronto-color-text-disabled);
+  background-color: var(--gpronto-color-surface-disabled);
+  border-color: var(--gpronto-color-border-standard);
+  filter: none;
+}
+
+.gcomponent-button--danger-loading:disabled {
+  color: var(--gpronto-color-text-disabled);
+  background-color: var(--gpronto-color-surface-disabled);
+  border-color: var(--gpronto-color-border-standard);
+  filter: none;
+}
+
+.gcomponent-input {
+  width: 100%;
+}
+
+.gcomponent-input__field-root {
+  width: 100%;
+}
+
+.gcomponent-input__field {
+  width: 100%;
+}
+
+.gcomponent-input__field {
+  box-sizing: border-box;
+  min-height: var(--gpronto-height-control-standard);
+  color: var(--gpronto-color-text-primary);
+  background-color: var(--gpronto-color-surface-standard);
+  border-radius: var(--gpronto-radius-compact);
+}
+
+.gcomponent-input__control {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 8px 12px;
+  font-family: inherit;
+  color: var(--gpronto-color-text-primary);
+  -webkit-text-fill-color: var(--gpronto-color-text-primary);
+}
+
+.gcomponent-input__control:not(:disabled):-webkit-autofill {
+  color: var(--gpronto-color-text-primary);
+  caret-color: var(--gpronto-color-text-primary);
+  background-color: var(--gpronto-color-surface-standard);
+  -webkit-text-fill-color: var(--gpronto-color-text-primary);
+  -webkit-box-shadow: 0 0 0 1000px var(--gpronto-color-surface-standard) inset;
+  box-shadow: 0 0 0 1000px var(--gpronto-color-surface-standard) inset;
+}
+
+.gcomponent-input__control:not(:disabled):autofill {
+  color: var(--gpronto-color-text-primary);
+  caret-color: var(--gpronto-color-text-primary);
+  background-color: var(--gpronto-color-surface-standard);
+  -webkit-text-fill-color: var(--gpronto-color-text-primary);
+  box-shadow: 0 0 0 1000px var(--gpronto-color-surface-standard) inset;
+}
+
+.gcomponent-input__control::placeholder {
+  color: #697586;
+  opacity: 1;
+}
+
+.gcomponent-input__control:disabled {
+  color: var(--gpronto-color-text-disabled);
+  -webkit-text-fill-color: var(--gpronto-color-text-disabled);
+}
+
+.gcomponent-input__control:disabled::placeholder {
+  color: var(--gpronto-color-text-disabled);
+}
+
+.gcomponent-input--textarea .gcomponent-input__field {
+  min-height: auto;
+  padding: 8px 12px;
+}
+
+.gcomponent-input--textarea .gcomponent-input__control {
+  padding: 0;
+}
+
+.gcomponent-input .gcomponent-input__outline {
+  border-color: var(--gpronto-color-border-standard);
+}
+
+.gcomponent-input .gcomponent-input__field:hover .gcomponent-input__outline {
+  border-color: var(--gpronto-color-border-control-hover);
+}
+
+.gcomponent-input:focus-within .gcomponent-input__outline {
+  border-color: var(--gpronto-color-brand-primary);
+}
+
+.gcomponent-input--error .gcomponent-input__outline {
+  border-color: var(--gpronto-color-state-error);
+}
+
+.gcomponent-input--disabled .gcomponent-input__field {
+  color: var(--gpronto-color-text-disabled);
+  background-color: var(--gpronto-color-surface-disabled);
+}
+
+.gcomponent-input--disabled .gcomponent-input__outline {
+  border-color: var(--gpronto-color-border-standard);
+}
+
+.gcomponent-input--select .gcomponent-input__field::before {
+  border-bottom-color: var(--gpronto-color-border-standard);
+}
+
+.gcomponent-input--select .gcomponent-input__field:hover::before {
+  border-bottom-color: var(--gpronto-color-border-control-hover);
+}
+
+.gcomponent-input--select .gcomponent-input__field::after {
+  border-bottom-color: var(--gpronto-color-brand-primary);
+}
+
+.gcomponent-input--select.gcomponent-input--error
+  .gcomponent-input__field::after {
+  border-bottom-color: var(--gpronto-color-state-error);
+}
+
+.gcomponent-input--select.gcomponent-input--disabled
+  .gcomponent-input__field::before {
+  border-color: var(--gpronto-color-border-standard);
+}
+
+.gcomponent-input__label {
+  color: var(--gpronto-color-text-secondary);
+}
+
+.gcomponent-input:focus-within .gcomponent-input__label {
+  color: var(--gpronto-color-brand-primary);
+}
+
+.gcomponent-input--error .gcomponent-input__label {
+  color: var(--gpronto-color-state-error);
+}
+
+.gcomponent-input--disabled .gcomponent-input__label {
+  color: var(--gpronto-color-text-disabled);
+}
+
+.gcomponent-input__supporting-text {
+  margin-top: 4.75px;
+  color: var(--gpronto-color-text-secondary);
+}
+
+.gcomponent-input--error .gcomponent-input__supporting-text {
+  color: var(--gpronto-color-state-error);
+}
+
+.gcomponent-input--disabled .gcomponent-input__supporting-text {
+  color: var(--gpronto-color-text-disabled);
+}
+
+.gcomponent-input--select .gcomponent-input__control {
+  min-height: var(--gpronto-height-control-standard);
+  padding: 8px 32px 8px 12px;
+  background-color: var(--gpronto-color-surface-standard);
+}
+
+.gcomponent-input__option-label {
+  color: var(--gpronto-color-text-primary);
+}
+
+.gcomponent-input--disabled .gcomponent-input__option-label {
+  color: var(--gpronto-color-text-disabled);
+}
+
+.gcomponent-input__selection-control {
+  color: var(--gpronto-color-text-secondary);
+}
+
+.gcomponent-input__selection-control:has(.gcomponent-input__control:checked) {
+  color: var(--gpronto-color-brand-primary);
+}
+
+.gcomponent-input--disabled .gcomponent-input__selection-control {
+  color: var(--gpronto-color-text-disabled);
+}
+
+.gcomponent-alert {
+  border-radius: var(--gpronto-radius-compact);
+}
+
+.gcomponent-alert--light.gcomponent-alert--success {
+  color: var(--gpronto-color-state-success);
+  background-color: rgb(239, 245, 239);
+}
+
+.gcomponent-alert--light.gcomponent-alert--info {
+  color: var(--gpronto-color-state-info);
+  background-color: rgb(236, 244, 251);
+}
+
+.gcomponent-alert--light.gcomponent-alert--warning {
+  color: var(--gpronto-color-state-warning);
+  background-color: rgb(254, 244, 234);
+}
+
+.gcomponent-alert--light.gcomponent-alert--error {
+  color: var(--gpronto-color-state-error);
+  background-color: rgb(250, 237, 237);
+}
+
+.gcomponent-alert--outline.gcomponent-alert--success {
+  color: var(--gpronto-color-state-success);
+  border-color: var(--gpronto-color-state-success);
+}
+
+.gcomponent-alert--outline.gcomponent-alert--info {
+  color: var(--gpronto-color-state-info);
+  border-color: var(--gpronto-color-state-info);
+}
+
+.gcomponent-alert--outline.gcomponent-alert--warning {
+  color: var(--gpronto-color-state-warning);
+  border-color: var(--gpronto-color-state-warning);
+}
+
+.gcomponent-alert--outline.gcomponent-alert--error {
+  color: var(--gpronto-color-state-error);
+  border-color: var(--gpronto-color-state-error);
+}
+
+.gcomponent-alert--filled.gcomponent-alert--success {
+  color: var(--gpronto-color-surface-standard);
+  background-color: var(--gpronto-color-state-success);
+}
+
+.gcomponent-alert--filled.gcomponent-alert--info {
+  color: var(--gpronto-color-surface-standard);
+  background-color: var(--gpronto-color-state-info);
+}
+
+.gcomponent-alert--filled.gcomponent-alert--warning {
+  color: var(--gpronto-color-surface-standard);
+  background-color: var(--gpronto-color-state-warning);
+}
+
+.gcomponent-alert--filled.gcomponent-alert--error {
+  color: var(--gpronto-color-surface-standard);
+  background-color: var(--gpronto-color-state-error);
+}
+
+.gcomponent-alert--success:not(.gcomponent-alert--filled)
+  .gcomponent-alert__icon {
+  color: var(--gpronto-color-state-success);
+}
+
+.gcomponent-alert--info:not(.gcomponent-alert--filled) .gcomponent-alert__icon {
+  color: var(--gpronto-color-state-info);
+}
+
+.gcomponent-alert--warning:not(.gcomponent-alert--filled)
+  .gcomponent-alert__icon {
+  color: var(--gpronto-color-state-warning);
+}
+
+.gcomponent-alert--error:not(.gcomponent-alert--filled)
+  .gcomponent-alert__icon {
+  color: var(--gpronto-color-state-error);
+}
+
+.gcomponent-badge {
+  color: var(--gpronto-color-text-primary);
+  background-color: var(--gpronto-color-surface-subtle);
+  border: 1px solid var(--gpronto-color-border-standard);
+  border-radius: var(--gpronto-radius-compact);
+}
+
+.gcomponent-badge--outline {
+  color: var(--gpronto-color-text-primary);
+  background-color: var(--gpronto-color-surface-standard);
+  border-color: var(--gpronto-color-border-standard);
+}
+
+.gcomponent-badge--primary {
+  color: var(--gpronto-color-surface-standard);
+  background-color: var(--gpronto-color-brand-primary);
+  border-color: var(--gpronto-color-brand-primary);
+}
+
+.gcomponent-badge--success {
+  color: var(--gpronto-color-surface-standard);
+  background-color: var(--gpronto-color-state-success);
+  border-color: var(--gpronto-color-state-success);
+}
+
+.gcomponent-badge--error {
+  color: var(--gpronto-color-surface-standard);
+  background-color: var(--gpronto-color-state-error);
+  border-color: var(--gpronto-color-state-error);
+}
+
+.gcomponent-badge--primary.gcomponent-badge--outline {
+  color: var(--gpronto-color-brand-primary);
+  background-color: var(--gpronto-color-surface-standard);
+  border-color: var(--gpronto-color-brand-primary);
+}
+
+.gcomponent-badge--success.gcomponent-badge--outline {
+  color: var(--gpronto-color-state-success);
+  background-color: var(--gpronto-color-surface-standard);
+  border-color: var(--gpronto-color-state-success);
+}
+
+.gcomponent-badge--error.gcomponent-badge--outline {
+  color: var(--gpronto-color-state-error);
+  background-color: var(--gpronto-color-surface-standard);
+  border-color: var(--gpronto-color-state-error);
+}
+
+.gcomponent-loader--primary {
+  color: var(--gpronto-color-brand-primary);
+}
+
+.gcomponent-loader--info {
+  color: var(--gpronto-color-state-info);
+}
+
+.gcomponent-loader--success {
+  color: var(--gpronto-color-state-success);
+}
+
+.gcomponent-loader--error {
+  color: var(--gpronto-color-state-error);
+}
+
+.gcomponent-postgres-data-table__button {
+  min-width: var(--gpronto-height-control-standard);
+  min-height: var(--gpronto-height-control-standard);
+  font-family: var(--gpronto-font-family-standard);
+  color: var(--gpronto-color-text-secondary);
+  border-radius: var(--gpronto-radius-compact);
+}
+
+.gcomponent-postgres-data-table__button:hover {
+  background-color: var(--gpronto-color-state-hover);
+}
+
+.gcomponent-postgres-data-table__button:active {
+  color: var(--gpronto-color-brand-primary);
+}
+
+.gcomponent-postgres-data-table__button:focus-visible {
+  color: var(--gpronto-color-brand-primary);
+}
+
+.gcomponent-postgres-data-table__button:disabled {
+  color: var(--gpronto-color-text-disabled);
+}
+
+.gcomponent-postgres-data-table__column-menu {
+  color: var(--gpronto-color-text-primary);
+  background-color: var(--gpronto-color-surface-standard);
+}
+
+.gcomponent-postgres-data-table__columns-panel {
+  color: var(--gpronto-color-text-primary);
+  background-color: var(--gpronto-color-surface-standard);
+}
+
+.gcomponent-postgres-data-table__filter-panel {
+  color: var(--gpronto-color-text-primary);
+  background-color: var(--gpronto-color-surface-standard);
+}
+
+.gcomponent-postgres-data-table__panel {
+  color: var(--gpronto-color-text-primary);
+  background-color: var(--gpronto-color-surface-standard);
+}
+
+.gcomponent-postgres-data-table__write {
+  background-color: var(--gpronto-color-surface-elevated);
+  border: 1px solid var(--gpronto-color-border-standard);
+  border-radius: var(--gpronto-radius-standard);
+}
+
+.gcomponent-postgres-data-table__write-header {
+  color: var(--gpronto-color-text-primary);
+  background-color: var(--gpronto-color-state-selected);
+  border-bottom: 1px solid var(--gpronto-color-border-standard);
+}
+
+.gcomponent-postgres-data-table__write-content {
+  background-color: var(--gpronto-color-surface-standard);
+}
+
+.gcomponent-postgres-data-table__write-content:last-child {
+  padding-bottom: 16px;
+}
+
+.gcomponent-postgres-data-table__write-actions {
+  padding: 16px;
+  background-color: var(--gpronto-color-surface-standard);
+  border-top: 1px solid var(--gpronto-color-border-standard);
+}
+
+.gcomponent-postgres-data-table {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  min-height: 0;
+}
+
+.gcomponent-postgres-data-table__grid {
+  flex: 1;
+  min-height: 10rem;
+}
+
+.gcomponent-postgres-data-table__action-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.gcomponent-postgres-data-table__write {
+  width: 100%;
+  min-width: 0;
+}
+
+.gcomponent-postgres-data-table__write-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.gcomponent-postgres-data-table__grid {
+  color: var(--gpronto-color-text-primary);
+  background-color: var(--gpronto-color-surface-standard);
+  border: 1px solid var(--gpronto-color-border-standard);
+  border-radius: var(--gpronto-radius-standard);
+}
+
+.gcomponent-postgres-data-table__column-header {
+  color: var(--gpronto-color-text-primary);
+  background-color: var(--gpronto-color-state-selected);
+  border-bottom-color: var(--gpronto-color-border-standard);
+}
+
+.gcomponent-postgres-data-table__row {
+  border-color: var(--gpronto-color-border-standard);
+}
+
+.gcomponent-postgres-data-table__cell {
+  border-bottom-color: var(--gpronto-color-border-standard);
+}
+
+.gcomponent-postgres-data-table__row:hover {
+  background-color: #f4f9ff;
+}
+
+.gcomponent-postgres-data-table__footer {
+  color: var(--gpronto-color-text-secondary);
+  background-color: var(--gpronto-color-surface-standard);
+  border-top-color: var(--gpronto-color-border-standard);
+}
+
+.gcomponent-postgres-data-table__field {
+  color: var(--gpronto-color-text-primary);
+  background-color: var(--gpronto-color-surface-standard);
+  border-radius: var(--gpronto-radius-compact);
+  outline: 1px solid var(--gpronto-color-border-standard);
+  outline-offset: -1px;
+}
+
+.gcomponent-postgres-data-table__field-control {
+  font-family: inherit;
+  color: var(--gpronto-color-text-primary);
+  background-color: var(--gpronto-color-surface-standard);
+}
+
+.gcomponent-postgres-data-table__field:hover {
+  outline-color: var(--gpronto-color-border-control-hover);
+}
+
+.gcomponent-postgres-data-table__field:focus-within {
+  outline-color: var(--gpronto-color-brand-primary);
+}
+
+.gcomponent-authentication-card {
+  box-sizing: border-box;
+  width: min(100%, 360px);
+  margin-inline: auto;
+  overflow: hidden;
+  background-color: var(--gpronto-color-surface-elevated);
+  border: 1px solid var(--gpronto-color-text-secondary);
+  border-radius: var(--gpronto-radius-standard);
+  box-shadow: none;
+}
+
+.gcomponent-authentication-card__header {
+  padding: 12px 16px;
+  color: var(--gpronto-color-text-primary);
+  background-color: var(--gpronto-color-state-selected);
+  border-bottom: 1px solid var(--gpronto-color-border-standard);
+}
+
+.gcomponent-authentication-card__content {
+  padding: 16px;
+  color: var(--gpronto-color-text-primary);
+  background-color: var(--gpronto-color-surface-standard);
+}
+
+.gcomponent-authentication-card
+  .gcomponent-authentication-card__content:last-child {
+  padding-bottom: 16px;
+}

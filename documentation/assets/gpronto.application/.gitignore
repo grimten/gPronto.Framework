@@ -1,0 +1,6 @@
+dist/
+gPronto/
+node_modules/
+.local
+.env.local
+.env
