@@ -123,7 +123,7 @@ Supabase platform configuration **MUST** be defined by [Supabase](supabase.md).
 
 <instructions category="validation" approval="silent" id="validate-authentication">
 
-The **Agent** **MUST** validate these **Rules** against the current **gPronto.Framework** source, every **gPronto.Application** listed in [Application inventory](application-inventory.md), the referenced documentation contracts, and the hosted Supabase projects when a **Rule** makes a claim about deployed state:
+The **Agent** **MUST** validate these **Rules** against the current **gPronto.Framework** source, every **gPronto.Application** listed in [Application catalog](application-catalog.md), the referenced documentation contracts, and the hosted Supabase projects when a **Rule** makes a claim about deployed state:
 
 - `authentication.md: rule:[authentication-overview]`
 - `authentication.md: rule:[scope-and-ownership]`

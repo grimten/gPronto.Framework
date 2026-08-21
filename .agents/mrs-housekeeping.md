@@ -8,9 +8,9 @@ The **Mrs Housekeeping** **Agent Role** performs housekeeping autonomously.
 
 <instructions category="housekeeping-initialization" approval="silent" id="follow-housekeeping-rules">
 
-The **Mrs Housekeeping** **Agent Role** **MUST** follow every `<rule>` tag in this document, including `<rule>` tags under the chapter `Rules` and elsewhere.
+The **Mrs Housekeeping** **Agent Role** **MUST** follow every `rule` tag in this document, including `rule` tags under the chapter `Rules` and elsewhere.
 
-The **Mrs Housekeeping** **Agent Role** **MUST** carry out each `<instructions>` tag under the chapter `Instructions`, one at a time, in document order.
+The **Mrs Housekeeping** **Agent Role** **MUST** carry out each `instructions` tag under the chapter `Instructions`, one at a time, in document order.
 
 </instructions>
 
@@ -58,14 +58,34 @@ When no correction or more than one correction is supported by the current files
 
 </rule>
 
+<rule category="housekeeping-agent-error-attribution" id="attribute-housekeeping-agent-errors">
+
+Whenever the **Mrs Housekeeping** **Agent Role** creates a new `agent-error` tag and its paired `agent-error-explanation` tag, the explanation content **MUST** contain exactly these three physical lines in this order:
+
+```text
+Author: Mrs Housekeeping
+Date/Time: YYYY-MM-DD HH:mm:ss
+Explanation: [EXPLANATION]
+```
+
+`Author` **MUST** be exactly `Mrs Housekeeping`.
+
+`Date/Time` **MUST** be the current `Europe/Stockholm` date and time when the finding is created, using 24-hour time with seconds.
+
+`[EXPLANATION]` **MUST** contain the complete evidence and reason for the failed validation.
+
+When **Mrs Housekeeping** updates an existing finding, she **MUST** preserve its original author and creation time.
+
+</rule>
+
 <rule category="housekeeping-pending-review">
 
-When an instruction requires a pending-review comment for a completed change, the **Mrs Housekeeping** **Agent Role** **MUST** add exactly one standalone `<agent-comment status="waiting-for-user">` for that change.
+When an instruction requires a pending-review comment for a completed change, the **Mrs Housekeeping** **Agent Role** **MUST** add exactly one standalone `agent-comment` tag with the `status` attribute set to `waiting-for-user` for that change.
 
 The pending-review comment **MUST** contain the local date and time in `YYYY-MM-DD HH:MM` format, the exact **Agent Role** name `Mrs Housekeeping`, a concise change description, the location of the change, the exact previous content, the exact current content, and the acceptance and rejection instructions shown in this template:
 
 ````md
-<agent-comment status="waiting-for-user">
+<agent-comment status="waiting-for-user" notrack>
 YYYY-MM-DD HH:MM `Mrs Housekeeping`
 
 Change: [DESCRIPTION]
@@ -121,21 +141,21 @@ A pending-review comment **MUST NOT** cause the **Mrs Housekeeping** **Agent Rol
 
 1. The **Mrs Housekeeping** **Agent Role** **MUST** identify every file defined by `documentation.md: variable:[housekeeping-markdown-files]`.
 2. The **Mrs Housekeeping** **Agent Role** **MUST** enforce `documentation.md: rule:[documentation-tag-requirements]`.
-3. For each `<instructions>` tag, the **Mrs Housekeeping** **Agent Role** **MUST**:
+3. For each `instructions` tag, the **Mrs Housekeeping** **Agent Role** **MUST**:
    1. remove the complete tag when its content contains no non-whitespace character;
    2. set `category="none"` when `category` is absent or contains no non-whitespace character;
    3. set `approval="silent"` when `approval` does not comply with the applicable **Rule** and the identified file is `gPronto.Framework:.agents/mrs-housekeeping.md`;
    4. when `approval` does not comply with the applicable **Rule** and the identified file is not `gPronto.Framework:.agents/mrs-housekeeping.md`, leave the tag unchanged, report it as unresolved, and continue;
    5. set `id="instructions-N"` when `id` is absent or contains no non-whitespace character, where `N` is the smallest positive integer that makes the `id` unique in that document;
-   6. remove every attribute other than `category`, `approval`, and `id`.
-4. For each `<rule>` tag, the **Mrs Housekeeping** **Agent Role** **MUST**:
+   6. remove every attribute other than `category`, `approval`, `id`, and `notrack`.
+4. For each `rule` tag, the **Mrs Housekeeping** **Agent Role** **MUST**:
    1. remove the complete tag when its content contains no non-whitespace character;
    2. set `category="none"` when `category` is absent or contains no non-whitespace character;
-   3. remove every attribute other than `category` and `id`;
+   3. remove every attribute other than `category`, `id`, and `notrack`;
    4. leave an absent `id` absent.
-5. For each `<variable>` tag, the **Mrs Housekeeping** **Agent Role** **MUST**:
+5. For each `variable` tag, the **Mrs Housekeeping** **Agent Role** **MUST**:
    1. set `id="variable-N"` when `id` is absent or contains no non-whitespace character, where `N` is the smallest positive integer that makes the `id` unique in that document;
-   2. remove every attribute other than `id`.
+   2. remove every attribute other than `id` and `notrack`.
 6. For each correction made under steps 3 through 5, the **Mrs Housekeeping** **Agent Role** **MUST** add a pending-review comment containing the exact previous and current tag content.
 7. The **Mrs Housekeeping** **Agent Role** **MUST** report every file changed by the deterministic corrections above.
 8. The **Mrs Housekeeping** **Agent Role** **MUST** process every remaining unmatched tag, duplicate `id`, invalid agent-comment attribute or status, agent-comment adjacency violation, or agent-error-explanation adjacency violation one at a time in ascending file path and document order.
@@ -180,15 +200,15 @@ A pending-review comment **MUST NOT** cause the **Mrs Housekeeping** **Agent Rol
 
 </instructions>
 
-### Documentation map
+### Documentation catalog
 
-<instructions category="documentation-catalog" approval="silent" id="synchronize-documentation-map">
+<instructions category="documentation-catalog" approval="silent" id="synchronize-documentation-catalog">
 
 1. The **Mrs Housekeeping** **Agent Role** **MUST** identify every file defined by `documentation.md: variable:[documentation-markdown-files]`.
-2. The **Mrs Housekeeping** **Agent Role** **MUST** enforce `documentation-map.md: rule:[documentation-catalog-completeness]`.
+2. The **Mrs Housekeeping** **Agent Role** **MUST** enforce `documentation-catalog.md: rule:[documentation-catalog-current]`.
 3. The **Mrs Housekeeping** **Agent Role** **MUST** match catalog entries to documents by each entry's relative Markdown link.
-4. For every identified document, the **Mrs Housekeeping** **Agent Role** **MUST** set the matching entry's heading to the document's level-one heading, set its scope content to the complete content of the document's `Scope` chapter, and set its link text to the document's level-one heading.
-5. When an identified document has no catalog entry, the **Mrs Housekeeping** **Agent Role** **MUST** add its complete entry in ascending level-one-heading order.
+4. For every identified document, the **Mrs Housekeeping** **Agent Role** **MUST** set the matching entry's link text to the document's level-one heading and its purpose to the document's first `Scope` statement with the owner prefix removed.
+5. When an identified document has no catalog entry, the **Mrs Housekeeping** **Agent Role** **MUST** add its entry in ascending relative-link order.
 6. When a catalog entry links to no identified document or duplicates another entry's link, the **Mrs Housekeeping** **Agent Role** **MUST** remove that entry.
 7. The **Mrs Housekeeping** **Agent Role** **MUST** report the number of entries it added, updated, and removed.
 

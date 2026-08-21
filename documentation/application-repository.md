@@ -71,7 +71,7 @@ Every import of **gPronto.Framework** in **gPronto.Application** source **MUST**
 
 <instructions category="validation" approval="silent" id="validate-application-repository">
 
-The **Agent** **MUST** validate these **Rules** against every **gPronto.Application** listed in [Application inventory](application-inventory.md):
+The **Agent** **MUST** validate these **Rules** against every **gPronto.Application** listed in [Application catalog](application-catalog.md):
 
 - `application-repository.md: rule:[root-files]`
 - `application-repository.md: rule:[gitignore-content]`

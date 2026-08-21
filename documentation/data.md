@@ -6,7 +6,7 @@ Draft
 
 ## Scope
 
-gPronto.Framework:Ownership of the shared PostgreSQL data layer and **gPostgresDataContract** catalog.
+gPronto.Framework:Ownership of the shared PostgreSQL data layer.
 gPronto.Framework:Registration and session sharing of the Refine Supabase data provider.
 gPronto.Framework:Versioned resource identifiers and their mapping to physical PostgreSQL tables.
 gPronto.Framework:Computation of Refine resource definitions from passive **gPostgresDataContract** metadata.
@@ -172,51 +172,15 @@ Versioned identifiers keep Refine query caching and invalidation separate. A mut
 
 A **gPostgresDataContract** file contains no resource definition. **gPronto.Framework** computes one for every version from its two exports.
 
-## Passive metadata
-
 ## Catalog
 
-The catalog contains the following versions. How a version is numbered and how a **gPronto.Application** selects one are specified in [gPostgresDataContracts](gpostgresdatacontracts.md).
-
-Nine physical tables have two versions, `_v1` matching the **gPronto.Application.Backstage** table shape and `_v2` matching the **gPronto.Application.Prototype** table shape:
-
-- `audit_events`;
-- `data_examples`;
-- `email_templates`;
-- `logs`;
-- `organisations`;
-- `settings`;
-- `user_events`;
-- `user_sessions`;
-- `users`.
-
-Each `_v2` version above adds the `is_backstage_mirrored` column, which the **gPronto.Application.Prototype** tables carry and the **gPronto.Application.Backstage** tables do not.
-
-The following physical tables exist only in the **gPronto.Application.Backstage** database and have one version:
-
-- `gatekeeper_sessions`;
-- `project_prototype_audit_events`;
-- `project_prototype_email_templates`;
-- `project_prototype_logs`;
-- `project_prototype_organisations`;
-- `project_prototypes`;
-- `project_prototype_settings`;
-- `project_prototype_user_events`;
-- `project_prototype_user_sessions`;
-- `project_prototype_users`;
-- `projects`;
-- `project_tasks`;
-- `project_user_access_grants`.
-
-The catalog therefore contains 31 **gPostgresDataContract** versions covering 22 physical table names.
+The current registered versions are listed in [gPostgresDataContract catalog](gpostgresdatacontract-catalog.md).
 
 ## Source organization
 
 Shared provider, registry, resource-computation, and format-catalog source is held under:
 
 `gPronto.Framework:gPronto.Framework`
-
-## Current boundaries
 
 ## Variables
 

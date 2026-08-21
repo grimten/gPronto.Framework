@@ -6,11 +6,8 @@ Draft
 
 ## Scope
 
-gPronto.Tools:Current direct-child `.mjs` scripts in `gPronto.Tools:scripts`.
-gPronto.Tools:Script log locations, names, and retention.
-gPronto.Tools:Script settings files and settings coverage.
-gPronto.Tools:Script environment-file ownership and usage.
-gPronto.Tools:Excludes scripts outside `gPronto.Tools:scripts`, files in subfolders, application startup, automated-test behavior, and deployment procedures.
+gPronto.Tools:Execution, logging, settings, and environment requirements for direct-child `.mjs` scripts in `gPronto.Tools:scripts`.
+gPronto.Tools:Excludes the current script inventory, files in subfolders, application startup, automated-test behavior, and deployment procedures.
 
 ## Verification
 
@@ -82,3 +79,6 @@ When validation fails, the **Agent** **MUST** mark the erroneous text by applyin
 
 </instructions>
 
+## Overview
+
+The current direct-child scripts and their purposes are listed in [Scripts catalog](scripts-catalog.md).

@@ -37,7 +37,7 @@ The **Agent** **MUST** validate both of these **Rules**:
 - `application-dependencies.md: rule:[package-content]`
 - `application-dependencies.md: rule:[package-lock-content]`
 
-The **Agent** **MUST** identify every current **gPronto.Application** from [Application inventory](application-inventory.md).
+The **Agent** **MUST** identify every current **gPronto.Application** from [Application catalog](application-catalog.md).
 
 For each referenced **Rule**, the **Agent** **MUST** verify that its linked canonical asset exists and that every current **gPronto.Application** satisfies the **Rule**.
 

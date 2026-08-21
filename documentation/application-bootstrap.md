@@ -23,7 +23,7 @@ Date: 2026-08-17
 
 <rule category="html-entry" id="index-html-content">
 
-Create the expected `gPronto.Application:index.html` by replacing `[APPLICATION NAME]` in the [canonical `gPronto.Application:index.html` template](assets/gpronto.application/index.html.template) with the Application Name from [Application inventory](application-inventory.md). After converting CRLF line endings to LF and removing trailing newline characters, `gPronto.Application:index.html` **MUST** exactly match that expected content.
+Create the expected `gPronto.Application:index.html` by replacing `[APPLICATION NAME]` in the [canonical `gPronto.Application:index.html` template](assets/gpronto.application/index.html.template) with the Application Name from [Application catalog](application-catalog.md). After converting CRLF line endings to LF and removing trailing newline characters, `gPronto.Application:index.html` **MUST** exactly match that expected content.
 
 </rule>
 
@@ -35,7 +35,7 @@ After converting CRLF line endings to LF and removing trailing newline character
 
 <rule category="vite-configuration" id="vite-content">
 
-Create the expected `gPronto.Application:vite.config.ts` by replacing `[DEVELOPMENT PORT]` and `[PREVIEW PORT]` in the [canonical `gPronto.Application:vite.config.ts` template](assets/gpronto.application/vite.config.ts.template) with the ports from [Deployments](deployments.md). After converting CRLF line endings to LF and removing trailing newline characters, `gPronto.Application:vite.config.ts` **MUST** exactly match that expected content.
+Create the expected `gPronto.Application:vite.config.ts` by replacing `[DEVELOPMENT PORT]` and `[PREVIEW PORT]` in the [canonical `gPronto.Application:vite.config.ts` template](assets/gpronto.application/vite.config.ts.template) with the ports from [Deployment catalog](deployment-catalog.md). After converting CRLF line endings to LF and removing trailing newline characters, `gPronto.Application:vite.config.ts` **MUST** exactly match that expected content.
 
 </rule>
 
@@ -81,7 +81,7 @@ Every **gPronto.Application** **MUST** contain the webpage folder `gPronto.Appli
 
 <instructions category="validation" approval="silent" id="validate-application-bootstrap">
 
-The **Agent** **MUST** validate these **Rules** against every **gPronto.Application** listed in [Application inventory](application-inventory.md):
+The **Agent** **MUST** validate these **Rules** against every **gPronto.Application** listed in [Application catalog](application-catalog.md):
 
 - `application-bootstrap.md: rule:[index-html-content]`
 - `application-bootstrap.md: rule:[tsconfig-content]`

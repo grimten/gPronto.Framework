@@ -36,7 +36,7 @@ to standard error even when the object containing the `projects` array is return
 
 An absent or empty `projects` array **MUST** be treated as a failed authentication check, but **MUST NOT** by itself be described as proof of the cause. An authenticated Supabase CLI for the correct account **MUST NOT** return an absent or empty `projects` array because the account owns one Supabase project for every **gPronto.Application**.
 
-To confirm that the Supabase CLI is authenticated as the correct account, the returned object's `projects` array **MUST** contain all project references in [Supabase projects](supabase-projects.md).
+To confirm that the Supabase CLI is authenticated as the correct account, the returned object's `projects` array **MUST** contain all project references in [Supabase project catalog](supabase-project-catalog.md).
 
 After the script has run, the Supabase CLI authentication **MUST** be checked. If it is not authenticated, the **User** **MUST** be alerted.
 
@@ -74,7 +74,7 @@ If either one is still missing, the **User** **MUST** be alerted and the work **
 
 <instructions category="validation" approval="silent" id="validate-supabase-cli">
 
-The **Agent** **MUST** validate every **Rule** and factual statement in this document by running the current Supabase CLI checks and comparing returned project references with [Supabase projects](supabase-projects.md). The **Agent** has approval to run read-only CLI checks and to add, update, or remove only validation-error tags in this document.
+The **Agent** **MUST** validate every **Rule** and factual statement in this document by running the current Supabase CLI checks and comparing returned project references with [Supabase project catalog](supabase-project-catalog.md). The **Agent** has approval to run read-only CLI checks and to add, update, or remove only validation-error tags in this document.
 
 When validation fails, the **Agent** **MUST** mark the erroneous text by applying `documentation.md: rule:[documentation-tag-requirements]`, and the `agent-error-explanation` **MUST** include the command contract, output channel, or missing project reference that fails. When every validation passes, the **Agent** **MUST** remove obsolete validation-error tags.
 
@@ -84,7 +84,7 @@ When validation fails, the **Agent** **MUST** mark the erroneous text by applyin
 
 We use Supabase CLI to connect to Supabase instances.
 
-Project information can be found in [Supabase projects](supabase-projects.md).
+Project information can be found in [Supabase project catalog](supabase-project-catalog.md).
 
 ## Check: Is the Supabase CLI installed
 

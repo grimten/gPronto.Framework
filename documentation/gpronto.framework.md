@@ -222,5 +222,5 @@ The developer should not have to think. The developer should act.
 
 ## How to learn more
 
-[Documentation map](documentation-map.md) catalogs every document and identifies the document that owns each subject.
+[Documentation catalog](documentation-catalog.md) catalogs every document and identifies the document that owns each subject.
 

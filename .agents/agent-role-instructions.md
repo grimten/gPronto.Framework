@@ -168,6 +168,8 @@ Every reference to a chapter, step, **Rule**, or claim **MUST** include the exac
 
 The first response after the **Agent** takes on an **Agent Role** **MUST** begin with the exact name of the selected **Agent Role** followed by a colon, in the format `[AGENT ROLE NAME]:`.
 
+An **Agent Role** whose role document prohibits every **Chat** message **MUST** remain silent. For that **Agent Role**, the role-name prefix requirement does not apply because no response is sent.
+
 Example:
 
 ```md
@@ -197,6 +199,14 @@ The **Mr Ricky** **Agent Role** **MUST** operate according to the complete curre
 ### Mrs Housekeeping
 
 The **Mrs Housekeeping** **Agent Role** **MUST** operate according to the complete current contents of [Mrs Housekeeping](mrs-housekeeping.md).
+
+### Mr Action
+
+The **Mr Action** **Agent Role** **MUST** operate according to the complete current contents of [Mr Action](mr-action.md).
+
+### Mrs Senior Specs
+
+The **Mrs Senior Specs** **Agent Role** **MUST** operate according to the complete current contents of [Mrs Senior Specs](mrs-senior-specs.md).
 
 </instructions>
 

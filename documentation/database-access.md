@@ -259,4 +259,3 @@ with check ((select public.get_user_role()) = 'admin');
 Policies combine with OR: the admin policy sits beside the applicable `standard` policies of the same table. A `standard` user passes an applicable `standard` policy, an `admin` passes the admin policy, and a signed-out request passes neither because every policy targets `authenticated`.
 
 ## Role field rules
-

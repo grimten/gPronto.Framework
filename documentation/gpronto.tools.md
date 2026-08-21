@@ -33,7 +33,9 @@ The scripts and automated-test harness **MUST** read repository-owned configurat
 
 Generated tool logs **MUST** be written under `gPronto.Tools:logs`, and persistent application browser profiles **MUST** be stored under `gPronto.Tools:browserprofiles`.
 
-Root script dependencies **MUST** be defined by `gPronto.Tools:package.json` and `gPronto.Tools:package-lock.json`. Automated-test dependencies **MUST** be defined independently by `gPronto.Tools:automated-tests/package.json` and `gPronto.Tools:automated-tests/package-lock.json`.
+Root script dependencies **MUST** be defined by `gPronto.Tools:package.json` and `gPronto.Tools:package-lock.json`.
+
+Automated-test dependencies **MUST** be defined independently by `gPronto.Tools:automated-tests/package.json` and `gPronto.Tools:automated-tests/package-lock.json`.
 
 </rule>
 
@@ -63,9 +65,8 @@ When validation fails, the **Agent** **MUST** mark the erroneous text by applyin
 
 The shared automation scripts are stored in `gPronto.Tools:scripts`, and their shared settings are stored in `gPronto.Tools:settings.json`.
 
-The shared automated-test harness is stored in `gPronto.Tools:automated-tests`.
+The shared automated-test runtime entries are stored directly in `gPronto.Tools:scripts`. Journey definitions are stored in `gPronto.Tools:test-journeys`, and the dashboard source is stored in `gPronto.Tools:test-dashboard`.
 
 Persistent browser profiles and generated logs are stored outside tracked source in `gPronto.Tools:browserprofiles` and `gPronto.Tools:logs`.
 
 The gPronto Visual Studio Code extension is stored in `gPronto.Tools:vs.code.extension`. It provides workspace-configurable documentation and editing support without becoming part of the framework package or a **gPronto.Application** browser runtime.
-
