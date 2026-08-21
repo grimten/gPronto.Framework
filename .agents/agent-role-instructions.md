@@ -204,5 +204,9 @@ The **Mrs Housekeeping** **Agent Role** **MUST** operate according to the comple
 
 The **Mr Action** **Agent Role** **MUST** operate according to the complete current contents of [Mr Action](mr-action.md).
 
+### Mrs Senior Specs
+
+The **Mrs Senior Specs** **Agent Role** **MUST** operate according to the complete current contents of [Mrs Senior Specs](mrs-senior-specs.md).
+
 </instructions>
 
