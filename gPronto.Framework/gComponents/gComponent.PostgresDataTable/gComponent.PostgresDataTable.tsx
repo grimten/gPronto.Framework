@@ -7,7 +7,7 @@ import {
   type GridSortModel,
   type GridSortDirection,
 } from "@mui/x-data-grid";
-import { useDelete, useOne, useRefreshButton } from "@refinedev/core";
+import { useDelete, useOne } from "@refinedev/core";
 import { Create, Edit, useDataGrid } from "@refinedev/mui";
 import { useForm } from "@refinedev/react-hook-form";
 import type { BaseSyntheticEvent, ReactElement } from "react";
@@ -83,6 +83,7 @@ type GComponentPostgresDataTableWriteContext = Readonly<{
   allowed?: boolean;
   required?: boolean;
   default?: unknown;
+  default_expression?: string | null;
   gcomponent?: string | null;
   short_description?: string | null;
 }>;
@@ -165,6 +166,7 @@ type GComponentPostgresDataTableResolvedWriteProperty = Readonly<{
   format: string;
   required: boolean;
   defaultValue: unknown;
+  defaultExpression: string | null;
   helperText: string | undefined;
   inputName: GComponentPostgresDataTableInputName;
   postgresDatatype: string | undefined;
@@ -177,6 +179,7 @@ type GComponentPostgresDataTableResolvedResource = Readonly<{
   identifier: string;
   label: string;
   idColumnName: string;
+  idColumnLabel: string;
   actionColumnNames: Readonly<{
     view: string;
     edit: string;
@@ -621,6 +624,7 @@ function deriveGComponentPostgresDataTableWriteProperties(
         format: writeContext.format ?? "",
         required: writeContext.required === true,
         defaultValue: writeContext.default,
+        defaultExpression: writeContext.default_expression ?? null,
         helperText:
           typeof writeContext.short_description === "string"
             ? writeContext.short_description
@@ -736,6 +740,9 @@ function resolveGComponentPostgresDataTableResource(
     identifier: definition.identifier,
     label: definition.meta.label,
     idColumnName: definition.meta.idColumnName,
+    idColumnLabel:
+      schemaColumns[definition.meta.idColumnName]?.datatable?.label ??
+      definition.meta.idColumnName,
     actionColumnNames,
     properties: permittedProperties.map(([columnName, column]) => ({
       name: columnName,
@@ -1054,8 +1061,9 @@ function GComponentPostgresDataTableTableFrame({
   );
   const settingsRef = useRef(settings);
   const initialSettingsRef = useRef(settings);
-  const { dataGridProps, setSorters } = useDataGrid({
+  const { dataGridProps, setSorters, tableQuery } = useDataGrid({
     resource,
+    dataProviderName: gProntoFrameworkSupabaseDataProviderName,
     pagination: { pageSize: 25, mode: "server" },
     sorters: {
       initial:
@@ -1230,6 +1238,20 @@ function GComponentPostgresDataTableTableFrame({
         onClick={() => onFrameChange({ frame: "insert", recordId: null })}
         icon="Create"
       />
+      {tableQuery.isError ? (
+        <GComponentFlow direction="vertical">
+          <GComponentAlert
+            color="red"
+            message="The table could not be loaded."
+          />
+          <GComponentButton
+            variant={tableQuery.isFetching ? "secondary-loading" : "secondary"}
+            text="Retry"
+            onClick={() => void tableQuery.refetch()}
+            icon="Refresh"
+          />
+        </GComponentFlow>
+      ) : (
       <DataGrid
         {...dataGridProps}
         className="gcomponent-postgres-data-table__grid"
@@ -1327,6 +1349,7 @@ function GComponentPostgresDataTableTableFrame({
           },
         }}
       />
+      )}
     </>
   );
 }
@@ -1584,45 +1607,15 @@ type GComponentPostgresDataTableWriteFormProps = Readonly<{
   resolvedResource: GComponentPostgresDataTableResolvedResource;
   mode: GComponentPostgresDataTableWriteMode;
   onSuccess: () => void;
+  onMutationPendingChange: (pending: boolean) => void;
 }>;
-
-type GComponentPostgresDataTableRefreshButtonProps = Readonly<{
-  resource: string;
-  recordId: string | number;
-  disabled: boolean;
-}>;
-
-function GComponentPostgresDataTableRefreshButton({
-  resource,
-  recordId,
-  disabled,
-}: GComponentPostgresDataTableRefreshButtonProps) {
-  const { onClick, loading } = useRefreshButton({
-    resource,
-    id: recordId,
-  });
-
-  return (
-    <GComponentButton
-      variant={
-        loading
-          ? "secondary-loading"
-          : disabled
-            ? "secondary-disabled"
-            : "secondary"
-      }
-      text="Refresh"
-      onClick={onClick}
-      icon="Refresh"
-    />
-  );
-}
 
 function GComponentPostgresDataTableWriteForm({
   resource,
   resolvedResource,
   mode,
   onSuccess,
+  onMutationPendingChange,
 }: GComponentPostgresDataTableWriteFormProps) {
   const properties =
     mode.context === "insert"
@@ -1652,11 +1645,12 @@ function GComponentPostgresDataTableWriteForm({
     handleSubmit,
     saveButtonProps,
     setError,
-    refineCore: { formLoading, onFinish, query },
+    refineCore: { formLoading, mutation, onFinish, query },
   } = useForm({
     defaultValues,
     refineCoreProps: {
       resource,
+      dataProviderName: gProntoFrameworkSupabaseDataProviderName,
       action: mode.action,
       redirect: false,
       onMutationSuccess: onSuccess,
@@ -1676,6 +1670,10 @@ function GComponentPostgresDataTableWriteForm({
         : {}),
     },
   });
+
+  useEffect(() => {
+    onMutationPendingChange(mutation.isPending);
+  }, [mutation.isPending, onMutationPendingChange]);
 
   const applyDecodedCodecResults = (
     results: ReadonlyMap<string, GProntoFrameworkValueCodecResult> | undefined,
@@ -1782,6 +1780,7 @@ function GComponentPostgresDataTableWriteForm({
     clearErrors();
     void handleSubmit(async (values) => {
       const record: Record<string, unknown> = {};
+      const omittedProperties = new Set<string>();
       let hasCodecError = false;
 
       for (const property of properties) {
@@ -1792,7 +1791,22 @@ function GComponentPostgresDataTableWriteForm({
         codecResultsRef.current.set(property.name, result);
 
         if (result.success) {
-          record[property.name] = result.value;
+          const emptyResult = encodeGProntoFrameworkValue(
+            getGComponentPostgresDataTableEmptyFormValue(property),
+            property.valueCodec,
+          );
+          const omitDatabaseDefault =
+            mode.frame === "insert" &&
+            !property.required &&
+            property.defaultExpression !== null &&
+            emptyResult.success &&
+            JSON.stringify(result.value) === JSON.stringify(emptyResult.value);
+
+          if (omitDatabaseDefault) {
+            omittedProperties.add(property.name);
+          } else {
+            record[property.name] = result.value;
+          }
         } else {
           hasCodecError = true;
           setError(property.name, {
@@ -1809,6 +1823,10 @@ function GComponentPostgresDataTableWriteForm({
       let hasValidationError = false;
 
       for (const property of properties) {
+        if (omittedProperties.has(property.name)) {
+          continue;
+        }
+
         const result = validateGProntoFrameworkValue(
           record[property.name],
           property.validators,
@@ -1873,6 +1891,27 @@ function GComponentPostgresDataTableWriteForm({
     />
   );
 
+  if (
+    mode.frame === "edit" &&
+    (query?.isLoading || query?.isPending || query?.isFetching)
+  ) {
+    return <GComponentLoader label="Loading record." />;
+  }
+
+  if (mode.frame === "edit" && (query?.isError || query?.data === undefined)) {
+    return (
+      <GComponentFlow direction="vertical">
+        <GComponentAlert color="red" message="The record could not be loaded." />
+        <GComponentButton
+          variant={query?.isFetching ? "secondary-loading" : "secondary"}
+          text="Retry"
+          onClick={() => void query?.refetch()}
+          icon="Refresh"
+        />
+      </GComponentFlow>
+    );
+  }
+
   return mode.frame === "insert" ? (
     <Create
       wrapperProps={{ className: "gcomponent-postgres-data-table__write" }}
@@ -1916,13 +1955,6 @@ function GComponentPostgresDataTableWriteForm({
       breadcrumb={false}
       goBack={false}
       canDelete={false}
-      headerButtons={
-        <GComponentPostgresDataTableRefreshButton
-          resource={resource}
-          recordId={mode.recordId}
-          disabled={formLoading}
-        />
-      }
       footerButtons={saveButton}
     >
       {writeForm}
@@ -1961,7 +1993,15 @@ function GComponentPostgresDataTableViewFrame({
     content = <GComponentLoader label="Loading record." />;
   } else if (query.isError || result === undefined || result === null) {
     content = (
-      <GComponentAlert color="red" message="The record could not be loaded." />
+      <GComponentFlow direction="vertical">
+        <GComponentAlert color="red" message="The record could not be loaded." />
+        <GComponentButton
+          variant={query.isFetching ? "secondary-loading" : "secondary"}
+          text="Retry"
+          onClick={() => void query.refetch()}
+          icon="Refresh"
+        />
+      </GComponentFlow>
     );
   } else {
     content = (
@@ -2053,7 +2093,7 @@ function GComponentPostgresDataTableDeleteFrame({
       <GComponentTypography text="Delete" variant="h2" />
       <GComponentFlow direction="horizontal">
         <GComponentTypography
-          text={resolvedResource.idColumnName}
+          text={resolvedResource.idColumnLabel}
           variant="small"
         />
         <GComponentTypography text={recordIdText} variant="normal" />
@@ -2085,6 +2125,8 @@ function GComponentPostgresDataTableOperationFrame({
   resolvedResource,
   onBackToTable,
 }: GComponentPostgresDataTableOperationFrameProps) {
+  const [mutationPending, setMutationPending] = useState(false);
+
   if (frameState.frame === "view") {
     return (
       <GComponentPostgresDataTableViewFrame
@@ -2117,9 +2159,13 @@ function GComponentPostgresDataTableOperationFrame({
     <GComponentFlow direction="vertical">
       <GComponentTypography text={heading} variant="h2" />
       <GComponentButton
-        variant="secondary"
+        variant={mutationPending ? "secondary-disabled" : "secondary"}
         text="Back to table"
-        onClick={onBackToTable}
+        onClick={() => {
+          if (!mutationPending) {
+            onBackToTable();
+          }
+        }}
         icon={null}
       />
       {writeMode === undefined ? null : (
@@ -2128,6 +2174,7 @@ function GComponentPostgresDataTableOperationFrame({
           resolvedResource={resolvedResource}
           mode={writeMode}
           onSuccess={onBackToTable}
+          onMutationPendingChange={setMutationPending}
         />
       )}
     </GComponentFlow>

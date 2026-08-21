@@ -12,7 +12,7 @@ Discussing
 
 
 ## Decision
-<user-action> add to the new agent role that this heading is mandatory here, and add that all decitions is to be recorded here   </user-action>
+
 None.
 
 <!--
@@ -31,7 +31,7 @@ While the status is `Discussing`, all investigative notes, question threads, **U
 
 When the discussion has resolved every open question, the status **MUST** change to `Draft`. The accepted outcomes **MUST** then be consolidated under `## Implementation Plan`, and subsequent specification work **MUST** occur within that chapter. The status **MUST** change to `Ready for Implementation` only when the implementation plan is complete and no open question remains.
 
-If implementation-plan work reveals another question, the status **MUST** return to `Discussing`, and the question thread **MUST** be added in this chapter. After the question is resolved, the status **MUST** return to `Draft`, the accepted decision **MUST** be incorporated into the implementation plan, and the resolved question thread **MUST** be removed.<user-action>move rules to the agent role (only the new agent role)    </user-action>
+If implementation-plan work reveals another question, the status **MUST** return to `Discussing`, and the question thread **MUST** be added in this chapter. After the question is resolved, the status **MUST** return to `Draft`, the accepted decision **MUST** be incorporated into the implementation plan, and the resolved question thread **MUST** be removed. 
 <!--
 Use one waiting `agent-comment` per question. Use this structure without the HTML escaping:
 
