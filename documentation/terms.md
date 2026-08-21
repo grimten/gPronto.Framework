@@ -66,10 +66,6 @@ An **Agent Role** is a named and fixed set of responsibilities and restrictions 
 
 **Miss Specs** is an **Agent Role**. Its description is in [the role document](../.agents/miss-specs.md).
 
-### Mrs Senior Specs
-
-**Mrs Senior Specs** is an **Agent Role**. Its description is in [the role document](../.agents/mrs-senior-specs.md).
-
 ### Mr Dev
 
 **Mr Dev** is an **Agent Role**. Its description is in [the role document](../.agents/mr-dev.md).
@@ -92,7 +88,7 @@ A **code tour** is a source-led investigation in which the **Agent Role** starts
 
 ### Issue document
 
-An **Issue document** is a document created or developed by **Miss Specs** or **Mrs Senior Specs** that describes an enhancement to the **gPronto.Framework** and one or more **gPronto.Application** for the **Mr Dev** **Agent Role** to implement.
+An **Issue document** is a document created by the Specs **Agent Role** that describes an enhancement to the **gPronto.Framework** and one or more **gPronto.Application** for the Dev **Agent Role** to implement.
 
 ### gPronto.Framework
 

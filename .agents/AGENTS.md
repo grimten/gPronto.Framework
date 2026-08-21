@@ -29,7 +29,6 @@ When the **User**'s initial message does not equal a Name value in the table bel
 | 3   | **Mr Ricky**         |
 | 4   | **Mrs Housekeeping** |
 | 5   | **Mr Action**        |
-| 6   | **Mrs Senior Specs** |
 
 After the **Agent** outputs the table, the **Agent** **MUST** accept the **User**'s answer only when it is an integer from the `#` column and contains nothing else.
 
