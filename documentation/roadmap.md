@@ -146,7 +146,21 @@ The exact generated-artifact location, generator ownership, validation command, 
 
 #### Add data adapters for APIs - Kalydos and Velmie
 
-Create a standalone API data-adapter system that provides the API equivalent of the existing PostgreSQL data-adapter contracts, schemas, generated artifacts, runtime, and components. Keep the API and PostgreSQL adapter systems separate until both have been used and stabilized. Define versioned API contracts for resources and operations, request and response mappings, authentication and secret boundaries, validation, errors, pagination, and generated-output ownership.
+Develop the initial implementation as easily and quickly as possible. Do not add unit tests, generalized abstractions, optional infrastructure, or other nonessential features.
+
+Use the existing PostgreSQL data connector, data-contract schemas, resource registration, and Refine integration as the behavioral reference. The API data connector must provide the corresponding contract, schema, resource, and data-operation model through Refine.
+
+The required initial result is a working Refine connector that can retrieve collections and individual records, make the retrieved information available for later display in a table, and submit edits that update existing records. Reading and updating records must work end to end against each supported supplier API.
+
+Front-end work is outside the scope of the initial implementation. Do not build a table, edit form, webpage, or other user-interface component. Build only the connector contracts, schemas, registration, runtime, and Refine data operations needed for the connector to work.
+
+Application-level access rights are outside the scope of the initial implementation. Every authenticated account may invoke every operation supported by the connector, without role-based, account-specific, or record-specific restrictions. The connector must still use the supplier authentication required to call the external API. Application-level access controls will be added later.
+
+The API and PostgreSQL data connectors must be completely independent implementations. They must not share any framework-owned function, helper, type, schema, registry, runtime module, component implementation, or generated artifact. Duplicate necessary implementation code instead of creating a shared abstraction, so a bug or change in one connector cannot affect the other connector.
+
+Formatting, validation, and similar enhancements are outside the scope of the initial implementation and can be added later.
+
+Create a standalone API data-adapter system that provides the API equivalent of the existing PostgreSQL data-adapter contracts, schemas, and runtime. Define versioned API contracts for resources and operations, request and response mappings, authentication and secret boundaries, essential error handling, pagination, and generated-output ownership only where required by the initial implementation.
 
 After the generic API adapter system is defined and working, implement separate supplier adapters for the Kalydos API and the Velmie API. Each supplier adapter must use a reviewed allowlist of supported operations, keep supplier credentials outside browser code and generated artifacts, and normalize supplier responses into the API adapter contract.
 
