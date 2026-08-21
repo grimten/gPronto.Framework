@@ -237,7 +237,7 @@ Nothing else lives in the file: no imports, no resource definition, no TypeScrip
 
 The connection between the chosen version and the database of the running **gPronto.Application** is loose, and nothing verifies it. When an application chooses a version whose columns its own table does not have, the operation fails at runtime.
 
-The catalog currently holds two table shapes: the `_v1` versions match the **gPronto.Application.Backstage** tables and the `_v2` versions match the **gPronto.Application.Prototype** tables. [Data](data.md) lists every version.
+The catalog currently holds two table shapes: the `_v1` versions match the **gPronto.Application.Backstage** tables and the `_v2` versions match the **gPronto.Application.Prototype** tables. [gPostgresDataContract catalog](gpostgresdatacontract-catalog.md) lists every version.
 
 ## What is a PostgreSQL data-contract schema
 

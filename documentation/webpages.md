@@ -247,8 +247,6 @@ The webpage component is a React function that returns the selected **gLayout**.
 
 #### Example: webpage component
 
-<agent-error>
-
 ```tsx
 function HomeWebpage() {
   return (
@@ -258,9 +256,6 @@ function HomeWebpage() {
   );
 }
 ```
-
-</agent-error>
-<agent-error-explanation>The current `GLayoutTwoColumnNavigation` public props type requires `content`, so this example does not type-check.</agent-error-explanation>
 
 ### 5. Add the exported webpage definition to `gPronto.Application:src/webpages/<name>.webpage/webpage.tsx`
 

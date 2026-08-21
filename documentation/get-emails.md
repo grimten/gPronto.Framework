@@ -25,7 +25,9 @@ Every authentication email sent to an address matching `larssoncj+XXX@gmail.com`
 
 <rule category="email-api" id="authentication-email-request">
 
-Authentication emails **MUST** be retrieved with `GET https://gcodex.grimten.com/api/v1/authentication-emails` and a bearer token whose value is read from `gPronto.Framework:.env variable:[GCODEX_API_TOKEN]`. The token value **MUST NOT** be written into documentation.
+Authentication emails **MUST** be retrieved with `GET https://gcodex.grimten.com/api/v1/authentication-emails` and a bearer token whose value is read from `gPronto.Framework:.env variable:[GCODEX_API_TOKEN]`.
+
+The token value **MUST NOT** be written into documentation.
 
 </rule>
 
@@ -89,4 +91,3 @@ for the newest authentication callback link of a recipient:
 `fetch.last_success_at` tells how fresh the data is; `fetch.last_error` is the
 reason when fetching is failing. The API documentation lives at
 `https://gcodex.grimten.com/docs`.
-

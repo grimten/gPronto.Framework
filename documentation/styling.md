@@ -50,21 +50,9 @@ A styling-option folder **MUST NOT** contain another folder.
 
 </rule>
 
-<rule category="styling-source-structure" id="registered-styling-options">
-
-The registered styling folders and files **MUST** be:
-
-`gPronto.Framework:gPronto.Framework/gStylings/gStyling-1/gStyling-1.css`
-
-`gPronto.Framework:gPronto.Framework/gStylings/gStyling-2/gStyling-2.css`
-
-</rule>
-
 <rule category="styling-source-structure" id="runtime-identifier">
 
 The runtime identifier of a styling option **MUST** equal its folder name.
-
-The registered runtime identifiers **MUST** be exactly `gStyling-1` and `gStyling-2`.
 
 </rule>
 
@@ -252,21 +240,7 @@ The framework stores every styling option under:
 
 The folder, file, and runtime identifier use the same name.
 
-For the first styling option:
-
-```text
-Folder: gPronto.Framework:gPronto.Framework/gStylings/gStyling-1
-File: gPronto.Framework:gPronto.Framework/gStylings/gStyling-1/gStyling-1.css
-Runtime identifier: gStyling-1
-```
-
-For the second styling option:
-
-```text
-Folder: gPronto.Framework:gPronto.Framework/gStylings/gStyling-2
-File: gPronto.Framework:gPronto.Framework/gStylings/gStyling-2/gStyling-2.css
-Runtime identifier: gStyling-2
-```
+The current registered options are listed in [Styling catalog](styling-catalog.md).
 
 ## CSS class ownership
 

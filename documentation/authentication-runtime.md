@@ -192,4 +192,3 @@ When validation fails, the **Agent** **MUST** mark the erroneous text by applyin
 ## Authentication synchronization
 
 ## Runtime state
-

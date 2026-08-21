@@ -22,15 +22,13 @@ Date: 2026-08-18
 
 Every **gLayout** property whose name matches `^openSlot([A-Z][a-z0-9]+)+$` is an **Open slot**. Every **Open slot** **MUST** contain exactly one **gComponent**.
 
-<agent-error>A **gLayout** **MUST NOT** accept a webpage-supplied **gComponent** through any other property.</agent-error>
-<agent-error-explanation>`GLayoutSingleColumn` currently accepts webpage content through `children`, and `GLayoutTwoColumnNavigation` currently accepts it through `content`.</agent-error-explanation>
+A **gLayout** **MUST NOT** accept a webpage-supplied **gComponent** through any other property.
 
 Every JSX element written directly in a **gLayout** source file whose identifier matches `^GComponent([A-Z][a-z0-9]+)+$` defines exactly one **Fixed slot** containing that JSX element. A **Fixed slot** **MUST NOT** be defined in any other way.
 
 Every JSX element written directly in a **gLayout** source file **MUST** be a lowercase HTML element, a React fragment, or have an identifier matching `^GComponent([A-Z][a-z0-9]+)+$`.
 
-<agent-error>Every **gComponent** rendered by a **gLayout** **MUST** be either the **gComponent** assigned to a **Fixed slot** or a **gComponent** received through an **Open slot** prop.</agent-error>
-<agent-error-explanation>`GLayoutSingleColumn` and `GLayoutTwoColumnNavigation` currently receive webpage content through properties that are not **Open slot** properties.</agent-error-explanation>
+Every **gComponent** rendered by a **gLayout** **MUST** be either the **gComponent** assigned to a **Fixed slot** or a **gComponent** received through an **Open slot** prop.
 
 Every **Fixed slot** and **Open slot** **MUST** be present in every JSX result returned by the **gLayout**.
 

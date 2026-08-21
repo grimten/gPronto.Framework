@@ -14,6 +14,7 @@ gPronto.Framework:Markdown heading, tag-block, blank-line, and document-ending f
 gPronto.Framework:Documentation tag syntax, attributes, pairing, and behavior.
 gPronto.Framework:Typed tag-reference integrity and documentation file-set variables.
 gPronto.Framework:Excludes the subject matter and requirements owned by other documents.
+gPronto.Tools:Excludes the automated tasks that recognize or act on the `notrack` attribute.
 
 ## Verification
 
@@ -62,9 +63,9 @@ When the document's `Status` chapter is `Active`, `TBD` **MUST NOT** be used as 
 
 <rule category="document-rules" id="document-rule-coverage">
 
-Every current requirement or contract statement in a Markdown document directly in `gPronto.Framework:documentation` **MUST** be represented by exactly one `<rule>` element in that document's `Rules` chapter. Explanatory, historical, example, roadmap, and purpose text **MUST NOT** be treated as a current requirement unless a **Rule** explicitly makes it one.
+Every current requirement or contract statement in a Markdown document directly in `gPronto.Framework:documentation` **MUST** be represented by exactly one `rule` element in that document's `Rules` chapter. Explanatory, historical, example, roadmap, and purpose text **MUST NOT** be treated as a current requirement unless a **Rule** explicitly makes it one.
 
-An existing `<rule>` element **MUST NOT** be removed during validation. When its statement is no longer accurate, its content **MUST** be corrected in place or marked with validation-error tags until the required decision is made.
+An existing `rule` element **MUST NOT** be removed during validation. When its statement is no longer accurate, its content **MUST** be corrected in place or marked with validation-error tags until the required decision is made.
 
 </rule>
 
@@ -114,7 +115,7 @@ The complete reference **MUST** be enclosed in one pair of backticks, **MUST NOT
 
 <rule category="file-paths" id="prototype-reference-name">
 
-The `[PROTOTYPE NAME]` in a `gPronto.Application.[PROTOTYPE NAME]:[PATH FROM ROOT]` reference **MUST** exactly match an Application Name whose Type is `gPronto.Application.Prototype` in [Application inventory](application-inventory.md).
+The `[PROTOTYPE NAME]` in a `gPronto.Application.[PROTOTYPE NAME]:[PATH FROM ROOT]` reference **MUST** exactly match an Application Name whose Type is `gPronto.Application.Prototype` in [Application catalog](application-catalog.md).
 
 </rule>
 
@@ -140,9 +141,9 @@ A Markdown ATX heading on the first physical line of a document **MUST NOT** hav
 
 A complete element whose tag name is defined by `documentation.md: variable:[documentation-tag-types]` is a tag element.
 
-A `<user-comment>...</user-comment>` element immediately followed by its `<agent-comment>...</agent-comment>` element **MUST** be treated as one tag block.
+A `user-comment` tag element immediately followed by its `agent-comment` tag element **MUST** be treated as one tag block.
 
-An `<agent-error>...</agent-error>` element immediately followed by its `<agent-error-explanation>...</agent-error-explanation>` element **MUST** be treated as one tag block.
+An `agent-error` tag element immediately followed by its `agent-error-explanation` tag element **MUST** be treated as one tag block.
 
 Every other tag element **MUST** be treated as one tag block.
 
@@ -164,37 +165,49 @@ A Markdown document **MUST NOT** contain more than one consecutive blank physica
 
 </rule>
 
+<rule category="tags" id="documentation-notrack-attribute">
+
+Every opening tag whose tag name is defined by `documentation.md: variable:[documentation-tag-types]` **MAY** include the optional attribute `notrack`.
+
+The `notrack` attribute **MUST** be written exactly as `notrack`, **MUST NOT** have a value, **MUST NOT** occur more than once, and **MUST NOT** appear in a closing tag.
+
+The presence of `notrack` means that the tag occurrence is intended to be ignored by automated tasks that recognize the attribute.
+
+The automated tasks that recognize `notrack` and their behavior are outside the scope of this document.
+
+</rule>
+
 <rule category="tags" id="documentation-tag-requirements">
 
 For each opening tag outside a fenced code block whose tag name is defined by `documentation.md: variable:[documentation-tag-types]`, the same document **MUST** contain exactly one matching closing tag after that opening tag.
 
 Every closing tag outside a fenced code block whose tag name is defined by `documentation.md: variable:[documentation-tag-types]` **MUST** match exactly one preceding opening tag of the same name.
 
-Every `<rule>` tag **MUST** have exactly one required `category` attribute, **MAY** have exactly one optional `id` attribute, and **MUST NOT** have another attribute.
+Every `rule` tag **MUST** have exactly one required `category` attribute, **MAY** have exactly one optional `id` attribute, **MAY** have the optional `notrack` attribute permitted by `documentation.md: rule:[documentation-notrack-attribute]`, and **MUST NOT** have another attribute.
 
 The `category` attribute **MUST** contain at least one non-whitespace character. When no category is needed, the `category` attribute **MUST** have the value `none`.
 
-When the `id` attribute is present, it **MUST** contain at least one non-whitespace character and **MUST** be unique among the `<rule>` tags in its document.
+When the `id` attribute is present, it **MUST** contain at least one non-whitespace character and **MUST** be unique among the `rule` tags in its document.
 
-The content between the opening and closing `<rule>` tags **MUST** contain at least one non-whitespace character.
+The content between the opening and closing `rule` tags **MUST** contain at least one non-whitespace character.
 
-Every `<variable>` tag **MUST** have exactly one `id` attribute and **MUST NOT** have another attribute.
+Every `variable` tag **MUST** have exactly one `id` attribute, **MAY** have the optional `notrack` attribute permitted by `documentation.md: rule:[documentation-notrack-attribute]`, and **MUST NOT** have another attribute.
 
-The `id` attribute **MUST** contain at least one non-whitespace character and **MUST** be unique among the `<variable>` tags in its document.
+The `id` attribute **MUST** contain at least one non-whitespace character and **MUST** be unique among the `variable` tags in its document.
 
-Every `<user-comment>`, `<user-action>`, `<agent-error>`, and `<agent-error-explanation>` tag **MUST NOT** have an attribute.
+Every `user-comment`, `user-action`, `agent-error`, and `agent-error-explanation` tag **MAY** have the optional `notrack` attribute permitted by `documentation.md: rule:[documentation-notrack-attribute]` and **MUST NOT** have another attribute.
 
-Every `<agent-comment>` tag **MAY** have exactly one optional `status` attribute and **MUST NOT** have another attribute.
+Every `agent-comment` tag **MAY** have exactly one optional `status` attribute, **MAY** have the optional `notrack` attribute permitted by `documentation.md: rule:[documentation-notrack-attribute]`, and **MUST NOT** have another attribute.
 
-When an `<agent-comment>` tag has a `status` attribute, its value **MUST** be exactly `waiting-for-user`.
+When an `agent-comment` tag has a `status` attribute, its value **MUST** be exactly `waiting-for-user`.
 
-Each `<agent-comment>` without a `status` attribute **MUST** begin on the next physical line after its `<user-comment>`, without an intervening blank line.
+Each `agent-comment` tag without a `status` attribute **MUST** begin on the next physical line after its `user-comment` tag, without an intervening blank line.
 
-An `<agent-comment status="waiting-for-user">` **MAY** appear as a standalone tag block and **MAY** immediately follow a `<user-comment>`.
+An `agent-comment` tag whose `status` attribute is `waiting-for-user` **MAY** appear as a standalone tag block and **MAY** immediately follow a `user-comment` tag.
 
-Each `<agent-error>` **MUST** be followed by exactly one `<agent-error-explanation>` on the next physical line without an intervening blank line.
+Each `agent-error` tag **MUST** be followed by exactly one `agent-error-explanation` tag on the next physical line without an intervening blank line.
 
-Every `<instructions>` tag **MUST** have exactly the attributes `category`, `approval`, and `id`, and **MUST NOT** have another attribute.
+Every `instructions` tag **MUST** have exactly the attributes `category`, `approval`, and `id`, **MAY** have the optional `notrack` attribute permitted by `documentation.md: rule:[documentation-notrack-attribute]`, and **MUST NOT** have another attribute.
 
 The `category` attribute **MUST** contain at least one non-whitespace character. When no category is needed, the `category` attribute **MUST** have the value `none`.
 
@@ -205,11 +218,9 @@ The `approval` attribute **MUST** be exactly one of:
 | `silent`  | The **Agent** has approval to carry out the instructions without asking for permission. What the **Agent** is approved to do **MUST** be explicitly mentioned in the instructions text. |
 | `request` | The **Agent** **MUST** ask for permission before carrying out the instructions.                                                                                                         |
 
-The `id` attribute **MUST** contain at least one non-whitespace character and **MUST** be unique among the `<instructions>` tags in its document.
+The `id` attribute **MUST** contain at least one non-whitespace character and **MUST** be unique among the `instructions` tags in its document.
 
-The content between the opening and closing `<instructions>` tags **MUST** contain at least one non-whitespace character.
-
-When the **Agent**, including while operating as an **Agent Role**, reads a document, the **Agent** **MUST** follow every instructions tag in that document according to its `approval` attribute.
+The content between the opening and closing `instructions` tags **MUST** contain at least one non-whitespace character.
 
 </rule>
 
@@ -230,6 +241,16 @@ The identified document **MUST** contain exactly one tag whose name equals the r
 The **Agent** **MUST** validate every **Rule** and factual statement in this document against all current Markdown files identified by `documentation.md: variable:[documentation-markdown-files]` and the current documentation workflow. The **Agent** has approval to inspect those files and to add, update, or remove only validation-error tags in this document.
 
 When validation fails, the **Agent** **MUST** mark the erroneous text by applying `documentation.md: rule:[documentation-tag-requirements]`, and the `agent-error-explanation` **MUST** identify the violated structure, reference, tag, or workflow requirement. When every validation passes, the **Agent** **MUST** remove obsolete validation-error tags.
+
+</instructions>
+
+<instructions category="tags" approval="silent" id="use-notrack-in-tag-examples">
+
+Whenever the **Agent**, including while operating as an **Agent Role**, writes a tag occurrence as part of instruction text, an example, or an illustration, the **Agent** **MUST** add the standalone `notrack` attribute to its opening tag.
+
+The **Agent** **MUST NOT** give the `notrack` attribute a value.
+
+This instruction does not apply when the tag occurrence is being created to perform the tag's defined purpose.
 
 </instructions>
 
@@ -287,12 +308,26 @@ A tag is a marker with a fixed format that an **Agent** or **User** can use to c
 
 All tags we use are listed below with an explanation.
 
+### notrack
+
+Every tag described below has the optional standalone attribute `notrack`.
+
+`notrack` has no value and is added only to the opening tag:
+
+```md
+<user-comment notrack>[COMMENT]</user-comment>
+```
+
+The presence of `notrack` means that the tag occurrence is intended to be ignored by automated tasks that recognize the attribute. The automated tasks themselves are outside the scope of this document.
+
+The examples below include `notrack` because they are examples. When a tag occurrence is created to perform its defined purpose, `notrack` is omitted.
+
 ### user-comment
 
 If a user want to add a comment in a file, the user adds the comment like this:
 
 ```md
-<user-comment>[COMMENT]</user-comment>
+<user-comment notrack>[COMMENT]</user-comment>
 ```
 
 Where [COMMENT] is the actual comment.
@@ -302,7 +337,7 @@ Where [COMMENT] is the actual comment.
 If the user wants something to be done, the user add a action in this format:
 
 ```md
-<user-action>[ACTION]</user-action>
+<user-action notrack>[ACTION]</user-action>
 ```
 
 Where [ACTION] is what is to be done.
@@ -312,7 +347,7 @@ Where [ACTION] is what is to be done.
 If the **Agent** wants to add a comment to a user-comment, that is to be done in this format:
 
 ```md
-<agent-comment>[COMMENT]</agent-comment>
+<agent-comment notrack>[COMMENT]</agent-comment>
 ```
 
 Where [COMMENT] is the actual comment.
@@ -320,7 +355,7 @@ Where [COMMENT] is the actual comment.
 An **Agent Role** can record a completed change that is waiting for the **User** to review by adding a standalone agent-comment in this format:
 
 ```md
-<agent-comment status="waiting-for-user">
+<agent-comment status="waiting-for-user" notrack>
 YYYY-MM-DD HH:MM [AGENT ROLE NAME]
 
 [DESCRIPTION OF THE COMPLETED CHANGE]
@@ -336,8 +371,8 @@ The waiting comment is placed immediately after the content it describes when th
 When the **User** asks the **Agent** to mark errors in a document, the **Agent** is to mark the text that contains the error with the agent-error tag in this format:
 
 ```md
-<agent-error>[TEXT THAT CONTAINS ERROR]</agent-error>
-<agent-error-explanation>[THE **AGENT** EXPLANATION TO THE ERROR]</agent-error-explanation>
+<agent-error notrack>[TEXT THAT CONTAINS ERROR]</agent-error>
+<agent-error-explanation notrack>[THE **AGENT** EXPLANATION TO THE ERROR]</agent-error-explanation>
 ```
 
 An `agent-error` tag that marks an error **MUST NOT** be enclosed in backticks or a fenced code block.
@@ -349,14 +384,14 @@ When an `agent-error` tag is written as an explanation, reference, or example in
 A rule in the **Rules** chapter of a document is marked with the rule tag in this format:
 
 ```md
-<rule category="[CATEGORY]" id="[ID]">
+<rule category="[CATEGORY]" id="[ID]" notrack>
 [RULE TEXT]
 </rule>
 ```
 
 Where [RULE TEXT] is the rule itself.
 
-The rule tag has one required attribute, `category`, and one optional attribute, `id`.
+The rule tag has one required attribute, `category`, and the optional attributes `id` and `notrack`.
 
 [CATEGORY] is a text field that can be used for many different things. When no category is needed, the value is `none`.
 
@@ -373,15 +408,14 @@ A variable tag stores reusable content. Its content can be text, a file list, or
 A variable tag is marked in this format:
 
 ```md
-<variable id="[ID]">
+<variable id="[ID]" notrack>
 [VALUE]
 </variable>
-
 ```
 
 Where [VALUE] is the complete reusable content stored by the variable.
 
-The variable tag has one required attribute, `id`.
+The variable tag has one required attribute, `id`, and the optional attribute `notrack`.
 
 [ID] uniquely identifies the variable within its document.
 
@@ -399,7 +433,7 @@ An instruction can require the **Agent**, including while operating as an **Agen
 Every instructions tag uses this format:
 
 ```md
-<instructions category="[CATEGORY]" approval="[APPROVAL]" id="[ID]">
+<instructions category="[CATEGORY]" approval="[APPROVAL]" id="[ID]" notrack>
 [INSTRUCTION TEXT]
 </instructions>
 ```
@@ -451,4 +485,3 @@ An instructions tag is referenced using this format:
 - Every Markdown file directly in the **gPronto.Framework** repository root.
 
 </variable>
-

@@ -103,4 +103,3 @@ Two examples:
 | Synchronization | Keeps two states aligned.                                  |
 | Url             | Builds one URL.                                            |
 | Validation      | Validation functions.                                      |
-

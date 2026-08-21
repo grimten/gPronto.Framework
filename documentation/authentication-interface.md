@@ -25,8 +25,9 @@ The set of public authentication **gComponents** **MUST** equal the set defined 
 
 Every **gPronto.Application** registers one separate webpage for each authentication **gComponent**.
 
-<agent-error>These webpages use the shared single-column **gLayout**, include a page heading, remain hidden from navigation, and render the applicable authentication **gComponent**.</agent-error>
-<agent-error-explanation>All 15 current authentication webpages in all four **gPronto.Application** repositories use `GLayoutTwoColumnNavigation`, not `GLayoutSingleColumn`.</agent-error-explanation>
+Each authentication webpage **MUST** render the applicable authentication **gComponent** and **MUST** remain hidden from navigation.
+
+Each **gPronto.Application** **MAY** select any public **gLayout** for each authentication webpage. Every authentication webpage **MUST** satisfy the general composition requirements defined by [Webpages](webpages.md). Authentication **MUST NOT** require a specific **gLayout** or other page-level composition.
 
 The behavior is divided into these groups:
 
@@ -88,7 +89,7 @@ Every redirect-based operation constructs its target from the active browser ori
 
 This returns production, stage, preview, and local requests to the same origin that initiated the operation.
 
-The authoritative application-origin and callback allow-list information is maintained in [Supabase projects](supabase-projects.md).
+The authoritative application-origin and callback overview is maintained in [Supabase project catalog](supabase-project-catalog.md).
 
 Authentication emails link to this callback webpage with `token_hash` and `type` query parameters. Visiting the webpage consumes nothing; the callback **gComponent** completes verification with one automatic `Verify.EmailLink.Function` call when it loads. An email link scanner that prefetches the link consumes nothing, because a prefetch does not execute JavaScript.
 

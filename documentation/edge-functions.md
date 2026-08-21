@@ -94,7 +94,7 @@ In every **gPronto.Application** repository, the name of every file directly in 
 
 <instructions category="validation" approval="silent" id="validate-edge-functions">
 
-The **Agent** **MUST** validate every **Rule** and factual statement in this document against the current Edge Function folders, `index.ts` and `handler.ts` files, shared modules, and hosted deployment inventory. The **Agent** has approval to perform read-only inspection and to add, update, or remove only validation-error tags in this document.
+The **Agent** **MUST** validate every **Rule** and factual statement in this document against the current Edge Function folders, `gPronto.Application:supabase/functions/[FUNCTION]/index.ts` and `gPronto.Application:supabase/functions/[FUNCTION]/handler.ts` files, shared modules, and hosted deployment inventory. The **Agent** has approval to perform read-only inspection and to add, update, or remove only validation-error tags in this document.
 
 When validation fails, the **Agent** **MUST** mark the erroneous text by applying `documentation.md: rule:[documentation-tag-requirements]`, and the `agent-error-explanation` **MUST** identify every affected application, function, and file. When every validation passes, the **Agent** **MUST** remove obsolete validation-error tags.
 
