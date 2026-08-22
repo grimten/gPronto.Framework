@@ -1,232 +1,122 @@
 # Require a Backstage session before showing a prototype
 
+## User instruction
+
+This is what we need to do.
+
+The complete public functionality must be provided by **gPronto.Framework**. Nothing may be added to a **gPronto.Application**.
+
+When an application starts, a setting in its environment file states whether the application is a **gPronto.Application.Prototype** or the **gPronto.Application.Backstage**.
+
+When any webpage in any **gPronto.Application.Prototype** is visited and there is no active **gPronto.Application.Backstage** session, the visitor is redirected from the **gPronto.Application.Prototype** to the **gPronto.Application.Backstage** sign-in webpage.
+
+How that is implemented does not matter. Existing functionality and new functionality are both acceptable.
+
+The implementation must be as easy and as quick as possible. It must not be complex. It must not be over-engineered. It must be straightforward. We implement it now and then never think about it again.
+
+If this requires an Edge Function, an Edge Function may be used, but not using one is preferred.
+
 ## Status
 
-Ready for specification review.
+Ready for implementation.
 
 ## Outcome
 
-Use the simplest framework-owned flow that does the following:
+A visitor who is not signed in to **gPronto.Application.Backstage** cannot see any webpage of any **gPronto.Application.Prototype**. The visitor is sent to the **gPronto.Application.Backstage** sign-in webpage instead.
 
-1. when a **User** is authenticated in **gPronto.Application.Backstage**, set the shared Backstage cookie;
-2. when any **gPronto.Application.Prototype** starts, run one JavaScript gate before rendering its webpages;
-3. when the shared cookie does not represent an active Backstage session, take the visitor to a configured Backstage sign-in URL;
-4. when the session is active, continue loading the prototype.
+This is separate from signing in as a **Mock user** inside a **gPronto.Application.Prototype**. A prototype Supabase session, a browser storage value, or a **Mock user** never satisfies this gate.
 
-Keep the shared implementation in **gPronto.Framework** wherever possible. Use each application's existing `GPRONTO_APPLICATION_TYPE` environment value to distinguish `BACKSTAGE` from `PROTOTYPE`.
+## Change boundary
 
-This requirement is separate from authentication as a **Mock user** inside a prototype. A visitor who is not logged into Backstage must not be allowed to reach a prototype webpage, regardless of any prototype-local Supabase session or browser storage value.
+Modify only files in `gPronto.Framework:gPronto.Framework`.
 
-## Current problem
+Do not modify a **gPronto.Application** file, an environment file, an Edge Function, an initial SQL script, or a hosted Supabase setting. Do not create a new Edge Function.
 
-The current repositories contain server-side functionality that constructs, issues, reads, renews, revokes, and clears a shared Backstage session cookie. They do not contain a prototype-side page guard that calls the server-side session check and blocks prototype rendering when the Backstage session is inactive.
+## What already exists
 
-The backed-up browser integration issues and clears the cookie when the Backstage Supabase authentication state changes. It does not guard prototype webpages.
+The server side is complete and deployed. Reuse it.
 
-The older prototype engine contains a browser-side session gate, but that gate checks a prototype-user authentication storage key in `localStorage`. It does not check the shared Backstage session and is not the required solution.
+`gPronto.Application.Backstage:supabase/functions/grimten-sso-issue/handler.ts` validates the signed-in Backstage Supabase user and returns the shared cookie `__Secure-grimten_session` in a `Set-Cookie` response header. The cookie is an opaque 256-bit token and is parent-domain, `Path=/`, `HttpOnly`, `Secure`, `SameSite=Lax`, with a bounded `Max-Age`. Only its SHA-256 hash is stored, in `public.grimten_sso_sessions`.
 
-## Confirmed current functionality
+`gPronto.Application.Backstage:supabase/functions/grimten-sso-session/handler.ts` exposes `GET` to check the cookie-backed session, `POST` to renew it, and `DELETE` to revoke it and clear the cookie. `GET` returns `active: true` or `active: false`. It uses credentialed CORS restricted to the origins in `GRIMTEN_SSO_ALLOWED_ORIGINS`, and its runtime JWT precheck is disabled, so a prototype browser can call it without a Supabase key.
 
-### Cookie value and construction
+`gPronto.Application.Backstage:supabase/functions/domain-user-presence/handler.ts` already calls the same session check and rejects an inactive session with HTTP `401`, so the mechanism is proven for credentialed requests from prototype origins.
 
-The shared helper defines the cookie name `__Secure-grimten_session`.
-
-`issueGrimtenSsoSession()` creates an opaque 256-bit token, stores only its SHA-256 hash in `public.grimten_sso_sessions`, and returns a cookie produced by `buildSessionCookie()`.
-
-`buildSessionCookie()` creates a parent-domain cookie with these attributes:
-
-- `Path=/`;
-- `HttpOnly`;
-- `Secure`;
-- `SameSite=Lax`;
-- a configured `Domain`;
-- a bounded `Max-Age`.
-
-Current source:
-
-`gPronto.Application.Backstage:supabase/functions/_shared/grimten-sso-session.ts`
-
-### Cookie issuance
-
-`createGrimtenSsoIssueHandler()` validates the signed-in Backstage Supabase user and authentication session, calls `issueGrimtenSsoSession()`, and returns the cookie in the HTTP `Set-Cookie` response header.
-
-Current source:
-
-`gPronto.Application.Backstage:supabase/functions/grimten-sso-issue/handler.ts`
-
-### Cookie validation and lifecycle
-
-`checkGrimtenSsoSession()` reads exactly one `__Secure-grimten_session` value from the incoming HTTP `Cookie` header, hashes the value, looks up the corresponding session, and returns inactive when the record is missing, revoked, or expired.
-
-`renewGrimtenSsoSession()` validates the cookie through `public.renew_grimten_sso_session` and returns a refreshed cookie when the session remains active.
-
-`revokeGrimtenSsoSession()` marks the matching session as revoked. `buildClearedSessionCookie()` returns an expired cookie with the same parent-domain attributes.
-
-Current source:
-
-`gPronto.Application.Backstage:supabase/functions/_shared/grimten-sso-session.ts`
-
-The `grimten-sso-session` Edge Function exposes:
-
-- `GET` to check the cookie-backed session;
-- `POST` to renew the session and refresh the cookie;
-- `DELETE` to revoke the session and clear the cookie.
-
-Current source:
-
-`gPronto.Application.Backstage:supabase/functions/grimten-sso-session/handler.ts`
-
-### Existing server consumer
-
-The `domain-user-presence` Edge Function already calls `checkGrimtenSsoSession()` and rejects a request with HTTP `401` when the shared Backstage session is not active. This proves that the cookie can be used for server-side authentication of credentialed requests from registered prototype origins.
-
-Current source:
-
-`gPronto.Application.Backstage:supabase/functions/domain-user-presence/handler.ts`
-
-## Confirmed backup functionality
-
-### Backstage browser synchronization
-
-The 2026-07-14 Backstage backup contains `syncGrimtenSso()`.
-
-When it receives a Backstage Supabase session, the function sends a credentialed `POST` to the configured issue endpoint with the Backstage access token. The browser can then accept the Edge Function's `Set-Cookie` response.
-
-When it receives no session, the function sends a credentialed `DELETE` to the configured session endpoint so the server can revoke and clear the cookie.
-
-Backup source:
+The Backstage browser trigger exists only in the 2026-07-14 backup as `syncGrimtenSso()`. Use it as the reference for the Backstage half.
 
 `C:/Backup/Backstage- 2026-07-14 09 47 42/Backstage/src/framework/auth/grimtenSso.ts`
 
-The backed-up `AuthProvider` calls `syncGrimtenSso()` when its Supabase `session` or authentication `status` changes and calls it again during sign-out.
+The cookie is `HttpOnly`, so browser JavaScript cannot read it and no local check is possible. The credentialed request to the existing endpoint is the check. No new Edge Function is written.
 
-Backup source:
+## Implementation
 
-`C:/Backup/Backstage- 2026-07-14 09 47 42/Backstage/src/framework/auth/AuthProvider.tsx`
+### 1. Application type
 
-This functionality is the Backstage cookie trigger. It is not the prototype page gate.
+**gPronto.Framework** reads the application type itself:
 
-### Unrelated prototype-local gate
+```ts
+import.meta.env.GPRONTO_APPLICATION_TYPE;
+```
 
-The older prototype engine contains `ensureSession()`, which checks whether a configured prototype-user authentication key exists in `localStorage` and redirects to a prototype login page when the key is absent.
+Every application `gPronto.Application:vite.config.ts` already sets `envPrefix: ["VITE_", "GPRONTO_"]`, and every application environment file already defines `gPronto.Application:.env variable:[GPRONTO_APPLICATION_TYPE]`, so no application file changes.
 
-Backup source:
+Accept exactly `BACKSTAGE` or `PROTOTYPE`. Any other value stops startup with an explicit error.
 
-`C:/Backup/prototype-engine- 2026-06-15 16 53 36/prototype-engine/main/src/javascript/redirect-not-auth-prototype-users-to-login.js`
+Do not add the value to the bootstrap request. `application-bootstrap.md: rule:[bootstrap-request]` states that the bootstrap request must contain exactly `styling`, `supabase`, and `webpageModules`, and adding a field would change all four applications.
 
-This gate is not evidence of a valid Backstage session. A browser storage value can also be created or changed by browser JavaScript, so it must not authorize access to protected prototype content.
+### 2. Prototype gate
 
-## Missing functionality
+When the application type is `PROTOTYPE`, **gPronto.Framework** runs one check before it renders any webpage content:
 
-No inspected current or backed-up prototype browser source contains a page gate that:
+1. render nothing while the check is running;
+2. send `GET` to the existing `grimten-sso-session` endpoint with `credentials: "include"`;
+3. render the application only when the response is successful and its `active` value is `true`;
+4. in every other case, including `active: false`, a failed request, a network failure, and a malformed response, call `window.location.replace()` with the Backstage sign-in URL.
 
-1. runs before protected prototype content is displayed;
-2. sends a request to the central Backstage session-check endpoint with browser credentials included;
-3. relies on server validation of `__Secure-grimten_session`;
-4. permits rendering only when the response confirms an active session;
-5. blocks or redirects when the session is absent, invalid, revoked, or expired;
-6. handles network and server failures without briefly exposing protected prototype content.
+The check runs once, at startup. It fails closed.
 
-The application environment files already contain `GPRONTO_APPLICATION_TYPE`, but the current application bootstrap entry points do not pass it to **gPronto.Framework**. The framework therefore cannot yet select the Backstage cookie trigger or prototype page gate from that value.
+### 3. Backstage cookie
 
-## Simplest implementation
+When the application type is `BACKSTAGE`, **gPronto.Framework** keeps the shared cookie in step with the existing Supabase authentication state:
 
-### Framework bootstrap selection
+- an authenticated session sends one credentialed `POST` to `grimten-sso-issue` with the Supabase access token, and the browser accepts the returned cookie;
+- signing out sends one credentialed `DELETE` to `grimten-sso-session`, and the browser clears the cookie.
 
-1. Add `GPRONTO_APPLICATION_TYPE` to the existing bootstrap request.
-2. Accept exactly `BACKSTAGE` or `PROTOTYPE` and stop bootstrap on another value.
-3. Keep the selection and lifecycle integration in **gPronto.Framework** so individual applications do not implement their own gate.
+Place this in the existing framework Authentication flow, beside the current session handling.
 
-Current application entry points to update:
+### 4. Configuration
 
-- `gPronto.Application.Backstage:src/gPronto.Application.Bootstrap.EntryPoint.ts`;
-- `gPronto.Application.gPrototype2:src/gPronto.Application.Bootstrap.EntryPoint.ts`;
-- `gPronto.Application.gPrototype3:src/gPronto.Application.Bootstrap.EntryPoint.ts`;
-- `gPronto.Application.gPrototype4:src/gPronto.Application.Bootstrap.EntryPoint.ts`.
+Hold two values as constants in **gPronto.Framework** source:
 
-### Backstage behavior
+- the Backstage Supabase functions base URL, built from `gPronto.Framework:.env variable:[SUPABASE_GBACKSTAGE_URL]`;
+- the Backstage sign-in URL `https://grimten.com/authentication/sign-in`.
 
-When the application type is `BACKSTAGE`, **gPronto.Framework** must synchronize the shared cookie with the existing Supabase authentication state:
+Do not add an environment variable, a bootstrap field, or a settings file. Adding one would require a change in every **gPronto.Application**.
 
-- an authenticated session sends one credentialed `POST` to `grimten-sso-issue` with the Supabase access token;
-- signing out sends one credentialed `DELETE` to `grimten-sso-session`;
-- the browser accepts or clears the cookie from the Edge Function's `Set-Cookie` response.
+## Decisions
 
-Use the backed-up `syncGrimtenSso()` behavior as the implementation reference, but place the resulting lifecycle functionality in the current framework authentication flow.
+- Return path. The redirect goes to the Backstage sign-in URL only. The original prototype URL is not preserved and the visitor is not returned automatically.
+- Authorization. The gate confirms only that a Backstage session is active. It does not check that the Backstage user is authorized for the requested prototype.
+- Recheck. The gate runs once at startup. There is no periodic recheck while a prototype stays open. A revoked or expired session blocks the next load.
+- Hosting layer. The gate is a browser gate only. Prototype source files and static assets remain served without access control.
+- Edge Functions. No Edge Function is created. The deployed `grimten-sso-issue` and `grimten-sso-session` are called as they are.
 
-### Prototype behavior
+## Out of scope
 
-When the application type is `PROTOTYPE`, **gPronto.Framework** must run one gate before mounting or revealing prototype webpage content:
-
-1. send a credentialed `GET` to the existing `grimten-sso-session` endpoint;
-2. allow rendering only when the response confirms `active: true`;
-3. otherwise call `window.location.replace()` with the configured Backstage sign-in URL.
-
-The JavaScript gate cannot directly inspect `__Secure-grimten_session` because the existing cookie is intentionally `HttpOnly`. The credentialed request is the simplest safe cookie check: the browser sends the cookie and the existing Edge Function validates it.
-
-### Configuration
-
-Keep the existing application-type values:
-
-- `GPRONTO_APPLICATION_TYPE=BACKSTAGE` for **gPronto.Application.Backstage**;
-- `GPRONTO_APPLICATION_TYPE=PROTOTYPE` for every **gPronto.Application.Prototype**.
-
-Add only the smallest configuration required to identify:
-
-- the central `grimten-sso-issue` endpoint;
-- the central `grimten-sso-session` endpoint;
-- the Backstage sign-in URL.
-
-Prefer framework bootstrap configuration derived from environment values over application-specific source code.
-
-## Required behavior
-
-1. Every **gPronto.Application.Prototype** must start in a blocking authentication-check state before rendering any prototype webpage content.
-2. The gate must make a credentialed request to an approved central Backstage endpoint. The browser must attach the `HttpOnly` cookie automatically; prototype JavaScript must not read the cookie value.
-3. The server must validate the opaque cookie using the existing central session records and return only the minimum session status required by the gate.
-4. An active and unexpired Backstage session permits the prototype to continue rendering.
-5. A missing, duplicated, invalid, revoked, or expired cookie must prevent rendering and take the visitor to the agreed Backstage sign-in flow.
-6. A network failure, malformed response, CORS failure, configuration failure, or server error must fail closed and must not reveal protected prototype content.
-7. The gate must apply to direct URL entry, browser refresh, and client-side navigation to every prototype webpage.
-8. The gate must not use a prototype Supabase session, a **Mock user**, `localStorage`, or `sessionStorage` as proof of a Backstage session.
-9. The Backstage cookie-issuance trigger must run after Backstage login so an authenticated Backstage browser receives the shared cookie required by the prototype gate.
-10. Backstage sign-out must revoke and clear the shared cookie so subsequently opened or refreshed prototypes are blocked.
-11. **gPronto.Framework** must own the shared Backstage synchronization and prototype gate; application repositories must only pass their environment configuration during bootstrap.
-12. The first implementation must reuse the existing `grimten-sso-issue` and `grimten-sso-session` Edge Functions instead of adding another endpoint.
-13. A failed prototype check must redirect using `window.location.replace()` so the blocked prototype page is not retained as the immediately previous history entry.
-
-## Security boundary
-
-The cookie is an authentication credential. Keep it opaque, `HttpOnly`, and unavailable to browser JavaScript. Do not place a Backstage access token, refresh token, service-role key, session hash, or authorization claim in prototype browser storage.
-
-The prototype must not authorize access from the existence of a cookie alone. The server-side session check must confirm that the central session record is active and unexpired.
-
-The page gate prevents the React application from rendering protected content after the page loads. If prototype source files and static assets must also be confidential, a browser-only React gate is insufficient; hosting-level access control must reject unauthorized requests before serving those resources.
-
-## Decisions still required
-
-- Choose the Backstage sign-in URL and how the original prototype URL is preserved for return after authentication.
-- Decide whether the first implementation checks only for an active Backstage session or also verifies that the Backstage **User** is authorized for the requested prototype origin.
-- Decide whether the first implementation checks only during bootstrap or periodically rechecks while a prototype remains open.
-- Decide whether protection is limited to rendered webpage content or must also cover the prototype's HTML, JavaScript, static assets, and data endpoints at the hosting layer.
+Hosting-level access control, session renewal from a prototype, per-prototype authorization, returning the visitor to the original prototype URL, changes to the cookie or its Edge Functions, and every **Mock user** behavior inside a prototype.
 
 ## Verification
 
-Automated verification must cover every current **gPronto.Application.Prototype** and at least these cases:
+Run the existing **gPronto.Framework** type-check and build, followed by the existing type-check and build commands in all four **gPronto.Application** repositories.
 
-1. no shared cookie blocks the page before protected content renders;
-2. a valid active Backstage session allows the page;
-3. an expired session blocks the page;
-4. a revoked session blocks the page;
-5. an invalid cookie blocks the page;
-6. a duplicated cookie blocks the page;
-7. a failed or malformed session-check response blocks the page;
-8. direct navigation to a nested prototype URL cannot bypass the gate;
-9. client-side navigation cannot bypass the gate;
-10. Backstage sign-out causes the prototype to be blocked on its next validation;
-11. a prototype-local Supabase session or forged browser-storage value does not satisfy the gate;
-12. the browser request includes credentials without exposing the cookie to JavaScript.
+Then check these cases in one **gPronto.Application.Prototype**:
+
+1. no shared cookie takes the visitor to the Backstage sign-in webpage, and no prototype content appears first;
+2. an active Backstage session shows the prototype;
+3. Backstage sign-out blocks the prototype on its next load;
+4. a nested prototype URL entered directly is gated in the same way;
+5. **gPronto.Application.Backstage** itself is never gated.
 
 ## Acceptance criteria
 
-Implementation is complete when the application type is passed through bootstrap, **gPronto.Framework** sets or clears the shared cookie from Backstage authentication changes, **gPronto.Framework** checks the existing session endpoint before rendering any prototype webpage, inactive visitors are sent to the configured Backstage sign-in URL, no protected content flashes before validation, and the automated verification passes for all current prototypes.
+Implementation is complete when **gPronto.Framework** reads the application type from the environment without any application change, sets and clears the shared cookie from Backstage authentication changes, checks the existing session endpoint before rendering any prototype webpage, sends an inactive visitor to the Backstage sign-in URL, shows no prototype content before the check completes, and every verification case passes.

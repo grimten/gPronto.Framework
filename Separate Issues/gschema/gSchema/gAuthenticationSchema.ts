@@ -1,0 +1,382 @@
+export const gAuthenticationSchema = {
+  gSchemaVersion: 1,
+  gSchemaName: "gAuthenticationSchema",
+  title: "Authentication",
+  description:
+    "The operation tree and every operation it holds, the session events the runtime handles, the status it publishes, the hydration response it must validate, and the runtime that owns the subscription.",
+  implementation: {
+    schemaLocation:
+      "GProntoFrameworkApplicationRootComponent.gSchemas.gAuthenticationSchema",
+    runtimeLocation: "GProntoFrameworkApplicationRootComponent.Authentication",
+    consumers: [
+      "the authentication public-interface factory",
+      "the authentication operation adapters",
+      "the authentication state store",
+      "the authentication runtime",
+      "the authentication hydration validator and mapper",
+    ],
+    adoption: {
+      conformanceCheckRequired: true,
+      invalidSchemaBlocksAuthenticationStartup: true,
+      currentRuntimeRemainsAuthoritativeUntilAtomicAdoption: true,
+      schemaWinsAfterAdoption: true,
+      duplicatedRuntimeDefinitionsAreRemovedAfterAdoption: true,
+      unsupportedVersion: "fail before the authentication runtime subscribes",
+    },
+  },
+  interfaceLocation: "GProntoFrameworkApplicationRootComponent.Authentication",
+  everyNodeIsFrozen: true,
+  everyLeafHasExactlyOneOwnProperty: "Function",
+  resultIsTheNativeSupabaseResult: true,
+  frameworkResultEnvelope: false,
+  callbackUrl: {
+    path: "/authentication/callback",
+    form: "<browser origin><path>",
+    throwsOutsideABrowser:
+      "The authentication callback URL is only available in a browser.",
+  },
+  emailLinkTypes: [
+    "signup",
+    "invite",
+    "magiclink",
+    "recovery",
+    "email_change",
+    "email",
+  ],
+  operations: {
+    signUp: {
+      publicPath: "Sign.Up.Function",
+      arguments: ["email", "password"],
+      call: "auth.signUp",
+      passes: {
+        email: "email",
+        password: "password",
+        options: { emailRedirectTo: "the callback URL" },
+      },
+      implemented: true,
+    },
+    signIn: {
+      publicPath: "Sign.In.Function",
+      arguments: ["email", "password"],
+      call: "auth.signInWithPassword",
+      passes: { email: "email", password: "password" },
+      implemented: true,
+    },
+    signOut: {
+      publicPath: "Sign.Out.Function",
+      arguments: [],
+      call: "auth.signOut",
+      passes: { scope: "local" },
+      implemented: true,
+    },
+    sendMagicLink: {
+      publicPath: "Send.MagicLink.Function",
+      arguments: ["email"],
+      call: "auth.signInWithOtp",
+      passes: {
+        email: "email",
+        options: {
+          shouldCreateUser: false,
+          emailRedirectTo: "the callback URL",
+        },
+      },
+      implemented: true,
+    },
+    sendPasswordRecovery: {
+      publicPath: "Send.PasswordRecovery.Function",
+      arguments: ["email"],
+      call: "auth.resetPasswordForEmail",
+      passes: ["email", { redirectTo: "the callback URL" }],
+      implemented: true,
+    },
+    resetPassword: {
+      publicPath: "Reset.Password.Function",
+      arguments: ["newPassword"],
+      call: "auth.updateUser",
+      passes: { password: "newPassword" },
+      assumes: "Supabase has already established the recovery session",
+      implemented: true,
+    },
+    changePassword: {
+      publicPath: "Change.Password.Function",
+      arguments: ["currentPassword", "newPassword"],
+      call: "auth.updateUser",
+      passes: {
+        password: "newPassword",
+        current_password: "currentPassword",
+      },
+      implemented: true,
+    },
+    changeEmail: {
+      publicPath: "Change.Email.Function",
+      arguments: ["newEmail"],
+      call: "auth.updateUser",
+      passes: [
+        { email: "newEmail" },
+        { emailRedirectTo: "the callback URL" },
+      ],
+      implemented: true,
+    },
+    resendEmailConfirmation: {
+      publicPath: "Resend.EmailConfirmation.Function",
+      arguments: ["email"],
+      call: "auth.resend",
+      passes: {
+        type: "signup",
+        email: "email",
+        options: { emailRedirectTo: "the callback URL" },
+      },
+      implemented: true,
+    },
+    acceptInvitation: {
+      publicPath: "Accept.Invitation.Function",
+      arguments: ["password"],
+      call: "auth.updateUser",
+      passes: { password: "password" },
+      assumes: "the invitation link has already established the session",
+      implemented: true,
+    },
+    verifyEmailLink: {
+      publicPath: "Verify.EmailLink.Function",
+      arguments: ["tokenHash", "type"],
+      call: "auth.verifyOtp",
+      passes: {
+        token_hash: "tokenHash",
+        type: "one of the email link types",
+      },
+      verifiedOncePerTokenHash: true,
+      implemented: true,
+    },
+    reauthenticate: {
+      publicPath: "Reauthenticate.Function",
+      arguments: [],
+      call: "auth.reauthenticate",
+      passes: null,
+      implemented: true,
+    },
+    createUser: {
+      publicPath: "Create.User.Function",
+      arguments: ["email", "password"],
+      call: null,
+      implemented: false,
+      throws:
+        "Authentication.Create.User.Function is not implemented. A trusted server boundary is required.",
+    },
+    inviteUser: {
+      publicPath: "Invite.User.Function",
+      arguments: ["email"],
+      call: null,
+      implemented: false,
+      throws:
+        "Authentication.Invite.User.Function is not implemented. A trusted server boundary is required.",
+    },
+    updateUser: {
+      publicPath: "Update.User.Function",
+      arguments: ["authUserId", "email"],
+      call: null,
+      implemented: false,
+      throws:
+        "Authentication.Update.User.Function is not implemented. A trusted server boundary is required.",
+    },
+    deleteUser: {
+      publicPath: "Delete.User.Function",
+      arguments: ["authUserId"],
+      call: null,
+      implemented: false,
+      throws:
+        "Authentication.Delete.User.Function is not implemented. A trusted server boundary is required.",
+    },
+  },
+  unimplementedOperationsAreAdministrative: true,
+  unimplementedOperationsThrowSynchronously: true,
+  state: {
+    publicProperties: [
+      "GProntoFrameworkApplicationRootComponent.AuthenticationStatus",
+      "GProntoFrameworkApplicationRootComponent.AuthenticationErrorMessage",
+    ],
+    statuses: ["Initializing", "SignedOut", "SignedIn", "Failure"],
+    initial: "Initializing",
+    errorMessageDefault: "-",
+    failureFallback: "Authentication failed.",
+    errorMessageIsTheDefaultUnlessTheStatusIsFailure: true,
+    publishedSnapshotIsFrozen: true,
+    theStoreHoldsNoTransitionLogic: true,
+    statusWrites: {
+      initializing: "the runtime starts",
+      signedOut: "the state was cleared",
+      signedIn: "a synchronization returned true",
+      failure: "the event handler threw",
+    },
+  },
+  events: {
+    handled: [
+      "INITIAL_SESSION",
+      "SIGNED_IN",
+      "SIGNED_OUT",
+      "TOKEN_REFRESHED",
+      "USER_UPDATED",
+      "PASSWORD_RECOVERY",
+      "MFA_CHALLENGE_VERIFIED",
+    ],
+    handlerIsSynchronous: true,
+    handlerNeverAwaitsASupabaseCall: true,
+    sessionBearingEventWithoutASessionIsIgnored: true,
+    unlistedEventIsIgnored: true,
+    aThrowSetsFailure: true,
+    clearing: {
+      appliesTo: ["SIGNED_OUT", "INITIAL_SESSION without a session"],
+      effect: "invalidate pending hydration and publish complete defaults",
+      status: "SignedOut",
+      hydration: null,
+    },
+    behaviour: {
+      initialSession: {
+        startsAnEpisode: true,
+        preservesMatchingCachedState: true,
+        hydration: "forced",
+        status: "SignedIn",
+      },
+      signedIn: {
+        differentUser: {
+          startsAnEpisode: true,
+          preservesMatchingCachedState: false,
+          hydration: "deferred",
+        },
+        sameUser: {
+          updatesTheSessionIdentityOnly: true,
+          hydration:
+            "none while a request is pending or after a success; one automatic retry after a failure",
+        },
+        status: "SignedIn",
+      },
+      passwordRecovery: {
+        differentUser: {
+          startsAnEpisode: true,
+          preservesMatchingCachedState: false,
+        },
+        sameUser: { updatesTheSessionIdentityOnly: true },
+        hydration: "forced",
+        status: "SignedIn",
+      },
+      tokenRefreshed: {
+        identityOnly: true,
+        ignoredForADifferentUser: true,
+        hydration: null,
+        status: "SignedIn",
+      },
+      userUpdated: {
+        identityOnly: true,
+        ignoredForADifferentUser: true,
+        hydration: null,
+        status: "SignedIn",
+      },
+      mfaChallengeVerified: {
+        differentUser: { startsAnEpisode: true, hydration: "deferred" },
+        sameUser: { identityOnly: true, hydration: null },
+        status: "SignedIn",
+      },
+    },
+    episode: {
+      invalidatesPendingHydration: true,
+      clearsTheHydratedAndFailedUserIds: true,
+      restoresTheOneAutomaticRetry: true,
+      preservesStateOnlyWhenTheCachedAuthUserIdMatches: true,
+      otherwisePublishesSessionIdentityDefaults: true,
+    },
+    hydrationReservation: {
+      forcedReservationSupersedesPendingWork: true,
+      unforcedReservationIsSkippedWhileARequestIsPending: true,
+      scheduledWithALaterTask: true,
+      everyRequestCarriesAGenerationAndAUserId: true,
+      staleRequestsAreDropped: true,
+    },
+  },
+  runtime: {
+    subscribesTo: "onAuthStateChange",
+    activeRuntimesPerClient: 1,
+    startingWithTheSameClientAddsAConsumer: true,
+    startingWithADifferentClientThrows:
+      "A different authentication runtime is already active.",
+    stopsAfterTheLastConsumerStops: true,
+    stopUnsubscribesAndStopsTheSynchronization: true,
+  },
+  hydrationResponse: {
+    functionName: "get_gpronto_framework_application_root_properties_version_1",
+    calledWith: "no arguments",
+    trusted: false,
+    validatedBeforeAnyValueIsWritten: true,
+    shape: {
+      version: {
+        datatype: "number",
+        required: true,
+        nullable: false,
+        value: 1,
+      },
+      user: {
+        id: { datatype: "uuid", required: true, nullable: false },
+        auth_user_id: { datatype: "uuid", required: true, nullable: false },
+        first_name: { datatype: "string", required: true, nullable: false },
+        last_name: { datatype: "string", required: true, nullable: false },
+        role: {
+          datatype: "applicationRole",
+          required: true,
+          nullable: false,
+        },
+        role_application: {
+          datatype: "string",
+          required: true,
+          nullable: true,
+        },
+        role_prototype: {
+          datatype: "string",
+          required: true,
+          nullable: true,
+        },
+        organisation_id: {
+          datatype: "uuid",
+          required: true,
+          nullable: true,
+        },
+      },
+      organisation: {
+        datatype: "organisation",
+        required: true,
+        nullable: true,
+        fields: {
+          id: { datatype: "uuid", required: true, nullable: false },
+          name: { datatype: "string", required: true, nullable: false },
+          organisation_type: {
+            datatype: "string",
+            required: true,
+            nullable: false,
+          },
+        },
+      },
+      session: {
+        session_id: { datatype: "uuid", required: true, nullable: false },
+      },
+    },
+    valueSets: {
+      applicationRole: ["standard", "admin"],
+    },
+    consistency: [
+      "an organisation must not be present when user.organisation_id is null",
+      "organisation.id must equal user.organisation_id",
+      "user.auth_user_id must equal the current session user id",
+    ],
+    onFailure: {
+      appliesTo: [
+        "a thrown call",
+        "a returned error",
+        "a response that fails validation",
+        "an auth user id that does not match the session",
+      ],
+      nothingFromTheResponseIsWritten: true,
+      publishesSessionIdentityDefaults: true,
+      statusStaysSignedIn: true,
+      automaticRetriesPerEpisode: 1,
+      retryIsTakenOnTheNextSameUserSignedInEvent: true,
+    },
+    onStateCommitFailure: { setsFailure: true },
+  },
+} as const;

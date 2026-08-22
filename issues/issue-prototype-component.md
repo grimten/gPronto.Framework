@@ -1,281 +1,115 @@
 # Add prototype information to every layout
 
+## User input
+
+This document has drifted and needs to be cleaned up. This is what we want, and nothing else.
+
+1. One new **gComponent**, added to every **gLayout** we have.
+2. The **gComponent** only shows text. No styling. Nothing else.
+3. The **Fixed slot** needs no CSS. Wrap it in a plain element or whatever is simplest. We do not care where on the webpage it is displayed. We just want this up and working.
+4. The **gComponent** shows information about the **gPronto.Application.Prototype**. We get that information from a table. See the SQL file in each **gPronto.Application**.
+5. All of this is done in **gPronto.Framework**, so it is called by both a **gPronto.Application.Prototype** and **gPronto.Application.Backstage**.
+6. When the application starts, it already sends the parameter that tells **gPronto.Framework** which application type it is. When the application is **gPronto.Application.Backstage**, the **gComponent** shows nothing. When it is a **gPronto.Application.Prototype**, we pull the data from the table and display it in the **gComponent**. Again, no styling, nothing else.
+7. Implement this the easiest way possible. No over-engineering. No elaborate verification. No navigation. We do not want anything clever or complex. We just want it to work.
+8. When this issue is written, it is to be written in a structured way that shows exactly what will be added.
+9. Remove everything else currently in this document, including anything about future work.
+
+For now, display only the prototype id.
+
+No Markdown document is updated by this issue.
+
 ## Status
 
 Ready for implementation.
 
-## Goal
+## Result
 
-Add a framework-owned prototype-information runtime and a public `GComponentPrototypeInfo` **gComponent**. The runtime loads synchronized prototype and webpage metadata into **gPronto.Framework** state. Every public **gLayout** renders the component at its bottom.
-
-The first version displays:
-
-- the prototype name;
-- the current webpage name;
-- the current webpage description.
-
-## Scope
-
-### Included
-
-- Add an application UUID and application type to every current **gPronto.Application** environment.
-- Pass both values through the existing application bootstrap request.
-- Validate both values before React rendering begins.
-- Add framework-owned immutable prototype state.
-- Hydrate prototype and webpage metadata through the existing Supabase browser client.
-- Add `GComponentPrototypeInfo` as a bottom **Fixed slot** in every public **gLayout**.
-- Display explicit loading and error states.
-- Extend the existing **gPronto.Tools** automated-test harness and journeys.
-- Update directly affected documentation.
-
-### Excluded
-
-- Changing the synchronized-table definitions, synchronization functions, schedules, RLS policies, or grants.
-- Displaying the signed-in Backstage **User** or **Mock user**.
-- Adding the right-side information panel or help menu.
-- Persisting prototype metadata in local storage.
-- Adding speculative repositories, adapters, providers, or abstractions.
-- Hiding errors or supplying fallback display values.
-
-## Dependencies
-
-The tables and reverse synchronization specified by `gPronto.Framework:issues/issue-new-tables-sync.md` must exist in the checked-in SQL and hosted databases before successful metadata hydration can be verified.
-
-The existing SQL permits authenticated standard and administrator users to select `project_prototypes` and `project_prototypes_webpages`. It does not permit anonymous access. The prototype runtime therefore starts with the application but performs its database hydration only after Authentication status becomes `SignedIn`.
+Every webpage of a **gPronto.Application.Prototype** displays its prototype id. Every webpage of **gPronto.Application.Backstage** displays nothing. No styling is added.
 
 ## Decisions
 
-1. The public **gComponent** name is `GComponentPrototypeInfo`.
-2. Every current **gPronto.Application** environment contains `GPRONTO_PROTOTYPE_ID` and `GPRONTO_APPLICATION_TYPE`.
-3. `GPRONTO_PROTOTYPE_ID` is the application UUID already recorded in `gPronto.Framework:.env`.
-4. `GPRONTO_APPLICATION_TYPE` is exactly `PROTOTYPE` or `BACKSTAGE`.
-5. Missing or invalid bootstrap values stop bootstrap with an explicit error.
-6. The prototype runtime is owned by **gPronto.Framework**, starts during application-root initialization, and uses the existing Supabase browser client.
-7. For a prototype, hydration waits for Authentication status `SignedIn`, reads one prototype row and all of its webpage rows, validates the complete result, and publishes one immutable snapshot.
-8. For Backstage, the runtime publishes an inactive ready state without querying prototype metadata, and `GComponentPrototypeInfo` renders nothing.
-9. `GComponentPrototypeInfo` never reads Supabase directly. It subscribes to framework-owned prototype state.
-10. A failed request, missing row, duplicate current-path match, null required display value, or invalid value produces an explicit visible error.
-11. No fallback value is displayed and no error is silently suppressed.
-12. The existing database security remains unchanged.
-13. The component is an additional **Fixed slot**. It does not replace `GComponentFooter`.
-14. The implementation uses existing interfaces and functions where available and introduces only the state, runtime, component, and test behavior required by this issue.
+1. The **gComponent** name is `GComponentPrototypeInfo`.
+2. The displayed information is the prototype id that the application sends to **gPronto.Framework** at startup. No database table is read.
+3. The **gComponent** performs no database access and does not depend on Authentication status.
+4. No CSS class token is assigned and no registered styling CSS file is changed.
+5. Nothing is displayed when the application is **gPronto.Application.Backstage**.
+6. No public property, no local-storage value, and no automated test is added.
 
-## Public state contract
+## What will be added
 
-`GProntoFrameworkApplicationRootComponent.Prototype` is a non-writable and non-configurable public property that always returns the latest immutable prototype snapshot.
+### 1. Send the application type and prototype id to the framework
 
-The snapshot contains exactly:
+The two values already exist in every application environment file as `gPronto.Application:.env variable:[GPRONTO_PROTOTYPE_ID]` and `gPronto.Application:.env variable:[GPRONTO_APPLICATION_TYPE]`. They are not yet passed to **gPronto.Framework**.
 
-```ts
-{
-  PrototypeId: string;
-  ApplicationType: "PROTOTYPE" | "BACKSTAGE";
-  Name: string | null;
-  Webpages: readonly {
-    Path: string;
-    Name: string;
-    Description: string;
-  }[];
-  Status: "Initializing" | "Ready" | "Error";
-  ErrorMessage: string | null;
-}
-```
-
-Initial prototype state is:
-
-- the validated bootstrap UUID in `PrototypeId`;
-- the validated bootstrap type in `ApplicationType`;
-- `null` in `Name`;
-- an empty immutable array in `Webpages`;
-- `Initializing` in `Status`;
-- `null` in `ErrorMessage`.
-
-These values represent initialization state. They are not display fallbacks.
-
-For Backstage, the runtime changes `Status` to `Ready` without a database request. The other values remain unchanged because the component is inactive.
-
-For a prototype, successful hydration publishes the resolved prototype name and every resolved webpage entry with `Status: "Ready"` and `ErrorMessage: null`.
-
-A hydration failure publishes `Status: "Error"` and the native error message. It does not publish a partial prototype name or partial webpage collection.
-
-Signing out clears hydrated metadata and restores the initial prototype state. A later successful sign-in hydrates it again.
-
-## Database reads
-
-After Authentication becomes `SignedIn`, the prototype runtime performs exactly these logical reads through the existing Supabase browser client:
-
-1. Select `id` and `name` from `project_prototypes` where `id` equals `PrototypeId` and `is_deleted` is `false`. Require exactly one row.
-2. Select `prototype_id`, `path`, `name`, and `description` from `project_prototypes_webpages` where `prototype_id` equals `PrototypeId` and `is_deleted` is `false`.
-
-Every selected prototype name, webpage path, webpage name, and webpage description must be a string. A null value is an error even though the current SQL permits null webpage metadata.
-
-The runtime does not select connection secrets, URLs, project identifiers, timestamps, synchronization markers, or unrelated columns.
-
-## Component behavior
-
-`GComponentPrototypeInfo` has no public props.
-
-When `ApplicationType` is `BACKSTAGE`, it returns no visible output.
-
-When `ApplicationType` is `PROTOTYPE`:
-
-- `Initializing` renders the existing `GComponentLoader`;
-- `Error` renders the existing `GComponentAlert` with `ErrorMessage`;
-- `Ready` finds the one stored webpage whose `Path` equals the current React Router pathname;
-- zero or multiple pathname matches render an explicit `GComponentAlert`;
-- one match renders a semantic footer containing the stored prototype name, webpage name, and webpage description.
-
-The component uses the existing React Router location state so route changes select the new stored webpage without another database request.
-
-## Implementation plan
-
-### 1. Add application identity configuration
-
-Add the two environment values to:
-
-- `gPronto.Application.Backstage:.env`
-- `gPronto.Application.gPrototype2:.env`
-- `gPronto.Application.gPrototype3:.env`
-- `gPronto.Application.gPrototype4:.env`
-
-Use the UUIDs from:
-
-- `gPronto.Framework:.env variable:[GPRONTO_GBACKSTAGE_ID]`
-- `gPronto.Framework:.env variable:[GPRONTO_GPROTOTYPE2_ID]`
-- `gPronto.Framework:.env variable:[GPRONTO_GPROTOTYPE3_ID]`
-- `gPronto.Framework:.env variable:[GPRONTO_GPROTOTYPE4_ID]`
-
-Set Backstage to `BACKSTAGE` and every prototype to `PROTOTYPE`. Do not change Vite `envPrefix`.
-
-### 2. Extend bootstrap
-
-Add a required `prototype` value containing `PrototypeId` and `ApplicationType` to the bootstrap request and application definition.
-
-Update:
+Add one required `prototype` value, containing `PrototypeId` and `ApplicationType`, to the bootstrap request and the application definition:
 
 - `gPronto.Framework:gPronto.Framework/gPronto.Framework.ApplicationRoot.BootstrapContract.ts`
-- `gPronto.Framework:gPronto.Framework/gPronto.Framework.ApplicationRoot.BootstrapCreation.tsx`
 - `gPronto.Framework:gPronto.Framework/gPronto.Framework.ApplicationRoot.ApplicationDefinitionContract.ts`
+
+Validate it in `bootstrapGProntoFrameworkApplication` before the React root is created, and store it with `setGProntoFrameworkPrototypeConfiguration`:
+
+- `gPronto.Framework:gPronto.Framework/gPronto.Framework.ApplicationRoot.BootstrapCreation.tsx`
+
+`PrototypeId` **MUST** be a non-empty string. `ApplicationType` **MUST** be exactly `PROTOTYPE` or `BACKSTAGE`. Anything else throws.
+
+Add the value to the entry point of every **gPronto.Application** and to the canonical asset:
+
+- `gPronto.Application.Backstage:src/gPronto.Application.Bootstrap.EntryPoint.ts`
+- `gPronto.Application.gPrototype2:src/gPronto.Application.Bootstrap.EntryPoint.ts`
+- `gPronto.Application.gPrototype3:src/gPronto.Application.Bootstrap.EntryPoint.ts`
+- `gPronto.Application.gPrototype4:src/gPronto.Application.Bootstrap.EntryPoint.ts`
 - `gPronto.Framework:documentation/assets/gpronto.application/src/gPronto.Application.Bootstrap.EntryPoint.ts`
-- all four `gPronto.Application:src/gPronto.Application.Bootstrap.EntryPoint.ts` files.
 
-Use the existing UUID validator. Validate the application type inline. Throw before creating the React root when validation fails.
+The added value is:
 
-### 3. Add prototype state and runtime
+```ts
+prototype: {
+  PrototypeId: import.meta.env.GPRONTO_PROTOTYPE_ID,
+  ApplicationType: import.meta.env.GPRONTO_APPLICATION_TYPE,
+},
+```
 
-Create:
+The Vite `envPrefix` already covers `GPRONTO_`, so no configuration changes.
 
-- `gPronto.Framework:gPronto.Framework/gPronto.Framework.ApplicationRoot.PrototypeContract.ts`
+### 2. Add the prototype store
+
+Create one file:
+
 - `gPronto.Framework:gPronto.Framework/gPronto.Framework.ApplicationRoot.PrototypeStore.ts`
-- `gPronto.Framework:gPronto.Framework/gPronto.Framework.ApplicationRoot.PrototypeRuntime.ts`
 
-The store follows the existing immutable snapshot-and-subscribe pattern. The runtime follows the existing consumer-counted start-and-stop pattern, subscribes to Authentication state, performs the database reads once for each signed-in session, clears state on sign-out, and prevents an older request from publishing after the session changes.
+It holds the validated bootstrap value in memory so that a **gComponent** can read it without a prop. It exports:
 
-Start the runtime from:
+- the type `GProntoFrameworkPrototypeConfiguration`, containing `PrototypeId` and `ApplicationType`;
+- `setGProntoFrameworkPrototypeConfiguration`, called once by the bootstrap;
+- `getGProntoFrameworkPrototypeConfigurationSnapshot`;
+- `subscribeToGProntoFrameworkPrototypeConfiguration`, following the existing snapshot-and-subscribe pattern already used by `gPronto.Framework:gPronto.Framework/gPronto.Framework.ApplicationRoot.PublicPropertiesStore.ts`.
 
-- `gPronto.Framework:gPronto.Framework/gPronto.Framework.ApplicationRoot.PublicComponent.tsx`
+The stored value never changes after the bootstrap sets it.
 
-Expose the public property from the same file. Do not add this state to Authentication public properties or local storage.
+### 3. Add GComponentPrototypeInfo
 
-### 4. Add GComponentPrototypeInfo
-
-Create:
+Create one file:
 
 - `gPronto.Framework:gPronto.Framework/gComponents/gComponent.PrototypeInfo/gComponent.PrototypeInfo.tsx`
 
-Export it from:
+It exports one runtime value named `GComponentPrototypeInfo` and declares no parameter, so it exports no props type.
+
+It reads the stored configuration. When `ApplicationType` is not `PROTOTYPE` it returns `null`. Otherwise it returns one `footer` element containing the `PrototypeId` text and no attribute other than the element itself.
+
+Add exactly one export line to:
 
 - `gPronto.Framework:gPronto.Framework/gPronto.Framework.PublicApi.gComponentExports.ts`
 
-The component subscribes to the prototype store and implements the behavior defined in this issue. It contains no database request.
+### 4. Render it in every gLayout
 
-Add only the CSS needed for the footer presentation to:
-
-- `gPronto.Framework:gPronto.Framework/gPronto.Framework.Styles.css`
-
-### 5. Add the Fixed slot to every layout
-
-Render `GComponentPrototypeInfo` once at the bottom of:
+Render `GComponentPrototypeInfo` once, as an additional **Fixed slot**, at the end of the returned JSX of each **gLayout**. Keep every existing **Fixed slot** and **Open slot** unchanged.
 
 - `gPronto.Framework:gPronto.Framework/gLayouts/gLayout.CardsModern/gLayout.CardsModern.tsx`
 - `gPronto.Framework:gPronto.Framework/gLayouts/gLayout.SingleColumn/gLayout.SingleColumn.tsx`
 - `gPronto.Framework:gPronto.Framework/gLayouts/gLayout.TwoColumnNavigation/gLayout.TwoColumnNavigation.tsx`
 
-Keep every existing **Fixed slot** and **Open slot** unchanged.
-
-### 6. Extend automated tests
-
-Use the shared **gPronto.Tools** harness. Do not add an application-owned test harness.
-
-Add an `expect-no-text` action by extending the existing action contract and step switch without introducing an unrelated abstraction.
-
-Update:
-
-- `gPronto.Tools:scripts/tests-settings.ts`
-- `gPronto.Tools:scripts/tests-steps.ts`
-- `gPronto.Tools:test-journeys/detailed-usage-gbackstage.json`
-- `gPronto.Tools:test-journeys/detailed-usage-gprototype2.json`
-- `gPronto.Tools:test-journeys/detailed-usage-gprototype3.json`
-- `gPronto.Tools:test-journeys/detailed-usage-gprototype4.json`
-
-Verify:
-
-1. each prototype displays its synchronized prototype name and current webpage name and description after sign-in;
-2. Backstage displays no prototype-information output;
-3. a missing current webpage entry produces an explicit visible error;
-4. the loading state is visible while hydration is pending;
-5. route navigation selects stored webpage metadata without another metadata request;
-6. all three public **gLayouts** contain the **Fixed slot**.
-
-For visible browser coverage of all three layouts, add two navigation-hidden verification webpages to gPrototype2: one using `GLayoutSingleColumn` and one using `GLayoutCardsModern`. Add matching synchronized webpage metadata. Keep the existing application webpages for `GLayoutTwoColumnNavigation`.
-
-### 7. Update documentation
-
-Update the directly affected current documentation:
-
-- `gPronto.Framework:documentation/application-bootstrap.md`
-- `gPronto.Framework:documentation/application-root.md`
-- `gPronto.Framework:documentation/gcomponent-catalog.md`
-- `gPronto.Framework:documentation/glayout-catalog.md`
-- `gPronto.Framework:documentation/automated-test-catalog.md`
-- any other document whose current requirement becomes inaccurate.
-
 ## Verification
 
-1. Confirm all four environment files contain a valid UUID and valid application type.
-2. Confirm invalid or missing bootstrap values stop bootstrap.
-3. Confirm the prototype runtime makes no metadata request in Backstage.
-4. Confirm the prototype runtime makes no metadata request before Authentication is signed in.
-5. Confirm a prototype makes exactly one prototype request and one webpage request for each signed-in session.
-6. Confirm the public snapshot and every webpage entry are frozen.
-7. Confirm sign-out removes previously hydrated metadata.
-8. Confirm request, row-count, null-value, invalid-value, and current-path failures are visible errors.
-9. Confirm route changes reuse stored metadata and do not repeat database reads.
-10. Confirm every public **gLayout** renders exactly one `GComponentPrototypeInfo`.
-11. Build Backstage and all three prototypes.
-12. Run the four shared automated-test journeys.
-
-## Acceptance criteria
-
-Implementation is complete when:
-
-- every application supplies and validates its UUID and type;
-- framework initialization owns prototype metadata hydration;
-- the public immutable `Prototype` state contains the resolved prototype and webpage metadata;
-- `GComponentPrototypeInfo` performs no database access;
-- each prototype displays the correct stored metadata after sign-in;
-- Backstage displays no component output and performs no prototype metadata request;
-- all loading and failure states are explicit;
-- no fallback display value or partial result is used;
-- every public **gLayout** contains the component as a bottom **Fixed slot**;
-- all four builds pass;
-- all automated-test assertions pass.
-
-## References
-
-- `gPronto.Framework:issues/issue-new-tables-sync.md`
-- `gPronto.Framework:gPronto.Framework/gPronto.Framework.ApplicationRoot.PublicComponent.tsx`
-- `gPronto.Framework:gPronto.Framework/gPronto.Framework.Authentication.Runtime.ts`
-- `gPronto.Framework:gPronto.Framework/gPronto.Framework.Authentication.StateStore.ts`
-- `gPronto.Framework:gPronto.Framework/gPronto.Framework.Supabase.BrowserClient.ts`
-- `gPronto.Framework:gPronto.Framework/gPronto.Framework.RegisteredWebpages.RouteComposition.tsx`
+1. Run `npm run build` in all four **gPronto.Application** repositories and confirm every build passes.
+2. Open one **gPronto.Application.Prototype** and confirm the prototype id is visible on a webpage of each of the three **gLayouts**.
+3. Open **gPronto.Application.Backstage** and confirm no prototype information is visible.
